@@ -1,0 +1,296 @@
+---
+title: "Avances de resultados sobre la encuesta de automatización 2024"
+author: "José Rodríguez de la Fuente - Eduardo Chávez Molina"
+format: 
+  html:
+    theme: litera
+    toc: true
+    code-fold: show
+---
+
+```{r base y liberias, echo=FALSE, message=FALSE, warning=FALSE}
+pacman::p_load(tidyverse, haven, summarytools, janitor)
+
+rm(list = ls())
+
+base <- read_sav("bases/Base OEI final.sav")
+
+theme_set(theme_light())
+
+```
+
+```{r arreglo de variables, echo=FALSE, message=FALSE, warning=FALSE}
+
+base <- base %>% 
+  mutate(sex = factor(case_when(sex == 2 ~ "Varón",
+                                sex == 1 ~ "Mujer",
+                                sex == 3 ~ "No binario",
+                            TRUE ~ NA_character_)),
+         sitcony = factor(case_when(sitcony == 1 ~ "unido",
+                                   sitcony == 2 ~ "casado",
+                                   sitcony == 3 ~ "separado/a o divorciado/a",
+                                   sitcony == 4 ~ "viudo/a",
+                                   sitcony == 5 ~ "soltero/a",
+                                   TRUE ~ NA_character_)),
+         obs = factor(case_when(obs == 1 ~ "Obra social",
+                                obs == 2 ~ "Prepaga",
+                                obs == 3 ~ "Hospital público o centros de salud",
+                                obs == 4 ~ "Otra:",
+                                TRUE ~ NA_character_)),
+         pais = factor(case_when(pais == 1 ~ "En esta localidad",
+                                  pais == 2 ~ "En otra localidad de esta provincia",
+                                  pais == 3 ~ "En otra provincia",
+                                  pais == 4 ~ "En un país limítrofe",
+                                  pais == 5 ~ "En otro país",
+                                  TRUE ~ NA_character_)),
+         local = factor(case_when(local == 1 ~ "CABA",
+                                  local == 2 ~ "Conurbano GBA",
+                                  local == 3 ~ "Córdoba",
+                                  local == 4 ~ "Mar del Plata",
+                                  TRUE ~ NA_character_)),
+         nivel_ed = factor(case_when(nivel == 1 | ((nivel == 3 | nivel == 4) & nivel2 == 0) ~ "Hasta sec. incom.",
+                                    (nivel == 3 | nivel == 4) & nivel2 == 1 ~ "Hasta sec. com.",
+                                    nivel == 5 & nivel2 == 0 ~ "Hasta terc. incom.",
+                                    nivel == 5 & nivel2 == 1 ~ "Hasta terc. com.",
+                                    nivel == 6 & nivel2 == 0 ~ "Universitario incom.",
+                                    nivel == 6 & nivel2 == 1 ~ "Universitario com.",
+                                    nivel == 7 ~ "Posgrado",
+                                    TRUE ~ NA_character_),
+                           levels = c("Hasta sec. incom.", "Hasta sec. com.", "Hasta terc. incom.", "Hasta terc. com.", "Universitario incom.", "Universitario com.", "Posgrado")),
+         tit = case_when(tit == 1 ~ "Ciencias sociales / humanidades",
+                         tit == 2 ~ "Economía y administración",
+                         tit == 3 ~ "Ciencias naturales",
+                         tit == 4 ~ "Comunicación",
+                         tit == 5 ~ "Arte",
+                         tit == 6 ~ "Educación física",
+                         tit == 7 ~ "Agrario / ambiente",
+                         tit == 8 ~ "Técnica",
+                         TRUE ~ NA_character_),
+         tit2_c = factor(tit2_c),
+         caes_f = factor(CAES_letra, labels = c("Agricultura, ganadería, caza, pesca",
+                                                "Industria manufacturera",
+                                                "Construcción",
+                                                "Comercio",
+                                                "Alojamiento y servicios de comidas",
+                                                "Información y comunicación",
+                                                "Actividades financieras y de seguros",
+                                                "Actividades profesionales, científicas y técnicas",
+                                                "Actividades administratias y servicios de apoyo",
+                                                "Administración pública y defensa",
+                                                "Enseñanza",
+                                                "Salud humana y servicios sociales",
+                                                "Otras actividades de servicio")),
+         ramact = factor(ramact, labels = c("Software",
+                                        "Metalmecánica",
+                                        "Farmacéutica",
+                                        "Alimentación",
+                                        "Hotelería",
+                                        "Textil",
+                                        "Mueble")),
+         CIUO1 = factor(case_when(CIUO >= 1000 & CIUO < 2000 ~ "Directores y gerentes",
+                           CIUO >= 2000 & CIUO < 3000 ~ "Profesionales científicos e intelectuales",
+                           CIUO >= 3000 & CIUO < 4000 ~ "Técnicos y profesionales de nivel medio",
+                           CIUO >= 4000 & CIUO < 5000 ~ "Personal de apoyo administrativo",
+                           CIUO >= 5000 & CIUO < 6000 ~ "Trabajadores de los servicios y comerciantes",
+                           CIUO >= 6000 & CIUO < 7000 ~ "Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+                           CIUO >= 7000 & CIUO < 8000 ~ "Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+                           CIUO >= 8000 & CIUO < 9000 ~ "Operadores de instalaciones y máquinas y ensambladores",
+                           CIUO >= 9000 & CIUO < 9990 ~ "Ocupaciones elementales",
+                           TRUE ~ NA_character_),
+                        levels = c("Directores y gerentes",
+                                   "Profesionales científicos e intelectuales",
+                                   "Técnicos y profesionales de nivel medio",
+                                   "Personal de apoyo administrativo",
+                                   "Trabajadores de los servicios y comerciantes",
+                                   "Agricultores y trabajadores calificados agropecuarios, forestales y pesqueros",
+                                   "Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
+                                   "Operadores de instalaciones y máquinas y ensambladores",
+                                   "Ocupaciones elementales")),
+         tamano = ifelse(trabajprin5 == -999, NA_character_, trabajprin5),
+         tamano = factor(tamano, labels = c("Una sola persona",
+                                    "2 a 5",
+                                    "6 a 10",
+                                    "11 a 50",
+                                    "51 a 200",
+                                    "Más de 200")))
+
+
+
+
+
+
+```
+
+
+## Datos sociodemográficos
+```{r datos sociodemográficos, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+demograficos <- base %>% 
+  select(sex, Edad, sitcony, hij, obs, pais, local)
+
+print(dfSummary(demograficos, 
+                varnumbers   = FALSE, 
+                valid.col    = FALSE, 
+                graph.magnif = 0.76),
+      method = 'render')
+```
+
+
+## Datos educativos 
+```{r datos educativos, echo=FALSE, message=FALSE, warning=FALSE}
+base %>%
+  group_by(nivel_ed) %>% 
+  tally() %>% 
+  adorn_percentages("col") %>% 
+  ggplot(aes(x = nivel_ed, y = n)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.02), size = 3) +
+  labs(title = "Nivel educativo alcanzado",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+  
+base %>%
+  filter(!is.na(tit)) %>% 
+  group_by(tit) %>% 
+  tally() %>% 
+  adorn_percentages("col") %>% 
+  ggplot(aes(x = fct_reorder(tit, n), y = n)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.02), size = 3) +
+  labs(title = "Título de egreso del secundario",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+
+base %>%
+  filter(nivel_ed %in% c("Hasta terc. com.", "Universitario com.", "Posgrado")) %>% 
+  group_by(tit2_c) %>% 
+  tally() %>% 
+  adorn_percentages("col") %>% 
+  ggplot(aes(x = tit2_c, y = n)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.02), size = 3) +
+  labs(title = "Tipo de título superior",
+       subtitle = "Población que finalizó estudios superiores",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+```
+
+## Capacitaciones 
+
+En esta sección calculamos el porcentaje de cursos, capacitaciones, etc., que realizaron los encuestados en términos generales y en aquellos casos arfirmativos, se observan cuántos estuvieron vinculados al trabajo.
+
+```{r capacitaciones, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  summarise(ev = mean(eduvirt, na.rm = T),
+            ev_t = mean(eduvirt1, na.rm = T),
+            capacit = mean(capacit1, na.rm = T),
+            capacit_t = mean(educol1, na.rm = T),
+            seminario = mean(capacit2, na.rm = T),
+            seminario_t = mean(eduprop1, na.rm = T),
+            otros_cursos = mean(capacit3, na.rm = T),
+            otros_cursos_t = mean(eduni1, na.rm = T)) %>% 
+  pivot_longer(cols = everything(), names_to = "tipo", values_to = "porcentaje") %>% 
+  ggplot(aes(x = fct_rev(tipo), y = porcentaje)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1, suffix = ""), y = porcentaje - 0.04), size = 3) +
+  labs(title = "Cursos y capacitaciones realizadas en el último año",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = c("Seminarios (relacionado al trabajo)",
+                              "Seminarios (población total)",
+                              "Otros cursos (relacionado al trabajo)",
+                              "Otros cursos (población total)",
+                              "Educación virtual (relacionado al trabajo)",
+                              "Educación virtual (población total)",
+                              "Capacitación (relacionado al trabajo)",
+                              "Capacitación (población total)")) +
+  coord_flip()
+
+  
+```
+
+
+## Trabajo y rama de actividad
+
+```{r Rama, echo=FALSE, message=FALSE, warning=FALSE}
+
+base %>%
+  group_by(caes_f) %>% 
+  tally() %>% 
+  adorn_percentages("col") %>% 
+  ggplot(aes(x = fct_rev(caes_f), y = n)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.02), size = 3) +
+  labs(title = "Rama de actividad declarada",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8)) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 35)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  coord_flip()
+
+
+base %>%
+  group_by(ramact) %>% 
+  tally() %>% 
+  adorn_percentages("col") %>% 
+  ggplot(aes(x = ramact, y = n)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.02), size = 3) +
+  labs(title = "Rama de actividad muestra",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8)) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 35)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  coord_flip()
+```
+
+
+```{r Ocupacion, echo=FALSE, message=FALSE, warning=FALSE}
+base %>%
+  group_by(CIUO1) %>% 
+  tally() %>% 
+  adorn_percentages("col") %>% 
+  ggplot(aes(x = fct_rev(CIUO1), y = n)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.015), size = 3) +
+  labs(title = "Ocupación según CIUO 08 a 1 dígito",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 25)) +
+  coord_flip()
+
+
+base %>%
+  group_by(tamano) %>% 
+  tally() %>% 
+  adorn_percentages("col") %>% 
+  ggplot(aes(x = tamano, y = n)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.015), size = 3) +
+  labs(title = "Personas según tamaño del establecimiento",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 25))
+```
+
+
