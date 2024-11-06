@@ -9,13 +9,13 @@ format:
 ---
 
 ```{r base y liberias, echo=FALSE, message=FALSE, warning=FALSE}
-pacman::p_load(tidyverse, haven, summarytools, janitor)
+pacman::p_load(tidyverse, haven, summarytools, janitor, ggthemr)
 
 rm(list = ls())
 
 base <- read_sav("bases/Base OEI final.sav")
 
-theme_set(theme_light())
+ggthemr("light")
 
 ```
 
@@ -114,10 +114,35 @@ base <- base %>%
                                     "51 a 200",
                                     "Más de 200")))
 
+base <- base %>% 
+  mutate(across(tarea1:tarea4, ~factor(., labels = c("Para nada", "Muy poco", "En alguna medida", "En gran medida", "En muy alta medida"))))
+
+base <- base %>% 
+  mutate(across(frecuencia1:frecuencia14, ~ na_if(., -999))) 
+
+base <- base %>% 
+  mutate(across(frecuencia1:frecuencia14, ~factor(., levels = c(1, 2, 3, 4, 5),
+                                                  labels = c("Nunca",
+                                                             "Menos de una vez al mes",
+                                                             "Menos de una vez a la semana pero por lo menos una vez al mes",
+                                                             "Por lo menos una vez a la semana pero no todos los días",
+                                                             "Todos los días"))))
+  
 
 
 
 
+         
+
+
+
+
+
+
+
+
+
+#Imputación ingresos
 
 ```
 
@@ -293,4 +318,60 @@ base %>%
   scale_x_discrete(labels = function(x) str_wrap(x, width = 25))
 ```
 
+
+## Tareas y actividades en el trabajo (Interacción, aprendizaje, organización, trabajo físico)
+
+```{r Autonomía, echo=FALSE, message=FALSE, warning=FALSE}
+
+base %>% 
+  pivot_longer(cols = tarea1:tarea4, names_to = "tarea", values_to = "categoria") %>% 
+  count(tarea, categoria) %>% 
+  mutate(porcentaje = n / sum(n), .by = tarea) %>% 
+  ggplot(aes(x = tarea, y = desc(porcentaje), fill = categoria)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
+                position = position_stack(.5), size = 2.5) +
+  labs(title = "Dimensiones de la autonomía en el trabajo",
+       subtitle = "Nivel de elección o cambio de...",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 8)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = c("Secuencia de tareas", "Forma de hacer el trabajo",
+                              "Velocidad y ritmo",
+                              "Horas de trabajo")) +
+  coord_flip()
+  
+
+```
+
+```{r Aprendizaje, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  pivot_longer(cols = frecuencia1:frecuencia3, names_to = "frecuencia", values_to = "categoria") %>% 
+  count(frecuencia, categoria) %>% 
+  mutate(porcentaje = n / sum(n), .by = frecuencia) %>%
+  na.omit() %>% 
+  ggplot(aes(x = frecuencia, y = porcentaje, fill = categoria)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
+                position = position_stack(.5), size = 2.5) +
+  labs(title = "Dimensiones del aprendizaje en el trabajo",
+       subtitle = "Proporción de tiempo en el que...",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 8),
+        legend.key.height = unit(1.3, "cm")) +
+  scale_fill_discrete(labels = function(x) str_wrap(x, width = 15)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = str_wrap(c("Aprende cosas nuevas con colegas", "Aprende haciendo",
+                              "Se mantiene al día con productos y servicios"), width = 20)) 
+
+```
 
