@@ -118,19 +118,18 @@ base <- base %>%
   mutate(across(tarea1:tarea4, ~factor(., labels = c("Para nada", "Muy poco", "En alguna medida", "En gran medida", "En muy alta medida"))))
 
 base <- base %>% 
-  mutate(across(frecuencia1:frecuencia14, ~ na_if(., -999))) 
+  mutate(across(frecuencia1:tecno5, ~ na_if(., -999))) 
 
 base <- base %>% 
-  mutate(across(frecuencia1:frecuencia14, ~factor(., levels = c(1, 2, 3, 4, 5),
+  mutate(across(frecuencia1:tecno5, ~factor(., levels = c(1, 2, 3, 4, 5),
                                                   labels = c("Nunca",
                                                              "Menos de una vez al mes",
                                                              "Menos de una vez a la semana pero por lo menos una vez al mes",
                                                              "Por lo menos una vez a la semana pero no todos los días",
                                                              "Todos los días"))))
   
-
-
-
+base <- base %>% 
+  mutate(ia1 = factor(ia1, labels = c("No", "Sí")))
 
          
 
@@ -223,6 +222,14 @@ base %>%
             otros_cursos = mean(capacit3, na.rm = T),
             otros_cursos_t = mean(eduni1, na.rm = T)) %>% 
   pivot_longer(cols = everything(), names_to = "tipo", values_to = "porcentaje") %>% 
+  mutate(tipo = factor(tipo, labels = c("Educación virtual (población total)",
+                                        "Educación virtual (relacionado al trabajo)",
+                                        "Capacitación (población total)",
+                                        "Capacitación (relacionado al trabajo)",
+                                        "Seminarios (población total)",
+                                        "Seminarios (relacionado al trabajo)",
+                                        "Otros cursos (población total)",
+                                        "Otros cursos (relacionado al trabajo)"))) %>%  
   ggplot(aes(x = fct_rev(tipo), y = porcentaje)) +
   geom_bar(stat = "identity", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1, suffix = ""), y = porcentaje - 0.04), size = 3) +
@@ -231,14 +238,6 @@ base %>%
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank()) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_discrete(labels = c("Seminarios (relacionado al trabajo)",
-                              "Seminarios (población total)",
-                              "Otros cursos (relacionado al trabajo)",
-                              "Otros cursos (población total)",
-                              "Educación virtual (relacionado al trabajo)",
-                              "Educación virtual (población total)",
-                              "Capacitación (relacionado al trabajo)",
-                              "Capacitación (población total)")) +
   coord_flip()
 
   
@@ -327,7 +326,7 @@ base %>%
   pivot_longer(cols = tarea1:tarea4, names_to = "tarea", values_to = "categoria") %>% 
   count(tarea, categoria) %>% 
   mutate(porcentaje = n / sum(n), .by = tarea) %>% 
-  ggplot(aes(x = tarea, y = desc(porcentaje), fill = categoria)) +
+  ggplot(aes(x = tarea, y = porcentaje, fill = categoria)) +
   geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
                 position = position_stack(.5), size = 2.5) +
@@ -372,6 +371,304 @@ base %>%
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_x_discrete(labels = str_wrap(c("Aprende cosas nuevas con colegas", "Aprende haciendo",
                               "Se mantiene al día con productos y servicios"), width = 20)) 
+
+```
+
+```{r Cooperacion, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  pivot_longer(cols = c(frecuencia4, frecuencia5, frecuencia7), names_to = "frecuencia", values_to = "categoria") %>% 
+  count(frecuencia, categoria) %>% 
+  mutate(porcentaje = n / sum(n), .by = frecuencia) %>%
+  na.omit() %>% 
+  ggplot(aes(x = frecuencia, y = porcentaje, fill = categoria)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
+                position = position_stack(.5), size = 2.5) +
+  labs(title = "Dimensiones de la cooperación en el trabajo",
+       subtitle = "Proporción de tiempo en el que con compañeros del trabajo...",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 8),
+        legend.key.height = unit(1.3, "cm")) +
+  scale_fill_discrete(labels = function(x) str_wrap(x, width = 15)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = str_wrap(c("Coopera o colabora",
+                                       "Comparte información",
+                                       "Asesora o aconseja"), width = 20))
+
+```
+
+```{r Planificación, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  pivot_longer(cols = c(frecuencia8, frecuencia9), names_to = "frecuencia", values_to = "categoria") %>% 
+  count(frecuencia, categoria) %>% 
+  mutate(porcentaje = n / sum(n), .by = frecuencia) %>%
+  na.omit() %>% 
+  ggplot(aes(x = frecuencia, y = porcentaje, fill = categoria)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
+                position = position_stack(.5), size = 2.5) +
+  labs(title = "Dimensiones de la planificación en el trabajo",
+       subtitle = "Proporción de tiempo en el que...",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 8),
+        legend.key.height = unit(1.3, "cm")) +
+  scale_fill_discrete(labels = function(x) str_wrap(x, width = 15)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = str_wrap(c("Planifica sus propias actividades",
+                                       "Planifica actividades de otros"), width = 20))
+
+```
+
+```{r Persuación, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  pivot_longer(cols = c(frecuencia10, frecuencia11), names_to = "frecuencia", values_to = "categoria") %>% 
+  count(frecuencia, categoria) %>% 
+  mutate(porcentaje = n / sum(n), .by = frecuencia) %>%
+  na.omit() %>% 
+  ggplot(aes(x = frecuencia, y = porcentaje, fill = categoria)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
+                position = position_stack(.5), size = 2.5) +
+  labs(title = "Dimensiones de la persuación en el trabajo",
+       subtitle = "Proporción de tiempo en el que...",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 8),
+        legend.key.height = unit(1.3, "cm")) +
+  scale_fill_discrete(labels = function(x) str_wrap(x, width = 15)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = str_wrap(c("Convence o influencia sobre otras personas",
+                                       "Negocia con las personas"), width = 20))
+
+```
+
+
+```{r Trabajo físico, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  pivot_longer(cols = c(frecuencia12:frecuencia14), names_to = "frecuencia", values_to = "categoria") %>% 
+  count(frecuencia, categoria) %>% 
+  mutate(porcentaje = n / sum(n), .by = frecuencia) %>%
+  na.omit() %>% 
+  ggplot(aes(x = frecuencia, y = porcentaje, fill = categoria)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
+                position = position_stack(.5), size = 2.5) +
+  labs(title = "Dimensiones del trabajo físico",
+       subtitle = "Proporción de tiempo en el que...",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 8),
+        legend.key.height = unit(1.3, "cm")) +
+  scale_fill_discrete(labels = function(x) str_wrap(x, width = 15)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = str_wrap(c("Realiza tareas físicas por tiempo prolongado",
+                                       "Transporta o mueve cargas pesadas",
+                                       "Debe ser hábil o preciso con los dedos o manos"), width = 20))
+
+```
+
+
+## Habilidades cognitivas (lectura, escritura, números, problemas)
+
+```{r Habiliades lectura-escritura, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  pivot_longer(cols = habili1:habili9, names_to = "tarea", values_to = "categoria") %>% 
+  count(tarea, categoria) %>% 
+  mutate(porcentaje = n / sum(n), .by = tarea) %>% 
+  na.omit() %>% 
+  ggplot(aes(x = tarea, y = porcentaje, fill = categoria)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
+                position = position_stack(.5), size = 2.5) +
+  labs(title = "Habilidades de lectura y escritura",
+       subtitle = "Con qué frecuencia...",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 8)) +
+  scale_fill_discrete(guide = guide_legend(nrow = 2),
+                      labels = function(x) str_wrap(x, width = 25)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = c("Lee órdenes o instrucciones",
+                              "Lee cartas, memos o correos electrónicos",
+                              "Lee artículos en periódicos o revistas prof.",
+                              "Lee manuales o material de referencia",
+                              "Lee cuentas y facturas",
+                              "Lee mapas, diagramas o esquemas",
+                              "Escribe cartas o correos electrónicos",
+                              "Escribe artículos para periódicos o revistas",
+                              "Escribe informes")) +
+  coord_flip()
+  
+
+```
+
+```{r Habiliades numéricas, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  pivot_longer(cols = habili10:habili15, names_to = "tarea", values_to = "categoria") %>% 
+  count(tarea, categoria) %>% 
+  mutate(porcentaje = n / sum(n), .by = tarea) %>% 
+  na.omit() %>%
+  ggplot(aes(x = tarea, y = porcentaje, fill = categoria)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
+                position = position_stack(.5), size = 2.5) +
+  labs(title = "Habilidades numéricas y problemas",
+       subtitle = "Con qué frecuencia...",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 8)) +
+  scale_fill_discrete(guide = guide_legend(nrow = 2),
+                      labels = function(x) str_wrap(x, width = 25)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = c("Calcula precios, costos o presupuestos",
+                              "Calcula fracciones, decimales o porcentajes",
+                              "Lee órdenes o instrucciones",
+                              "Usa cálculos algebraicos o fórmulas simples",
+                              "Se enfrenta a problemas simples",
+                              "Se enfrenta a problemas complejos")) +
+  coord_flip()
+  
+
+```
+
+## Tecnología
+
+```{r Tecnología, echo=FALSE, message=FALSE, warning=FALSE}
+
+base %>% 
+  pivot_longer(cols = tecno1:tecno5, names_to = "tarea", values_to = "categoria") %>% 
+  count(tarea, categoria) %>% 
+  mutate(porcentaje = n / sum(n), .by = tarea) %>% 
+  na.omit() %>%
+  ggplot(aes(x = tarea, y = porcentaje, fill = categoria)) +
+  geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
+                position = position_stack(.5), size = 2.5) +
+  labs(title = "Habilidades tecnológicas",
+       subtitle = "Con qué frecuencia...",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 8)) +
+  scale_fill_discrete(guide = guide_legend(nrow = 2),
+                      labels = function(x) str_wrap(x, width = 25)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = c("Realiza operaciones en internet",
+                              "Usa hojas de cálculo",
+                              "Usa procesador de texto",
+                              "Usa un lenguaje de programación",
+                              "Realiza videoconferencias")) +
+  coord_flip()
+  
+
+```
+
+## Inteligencia artificial
+
+```{r IA, echo=FALSE, message=FALSE, warning=FALSE}
+base %>%
+  group_by(ia1) %>% 
+  tally() %>% 
+  adorn_percentages("col") %>% 
+  ggplot(aes(x = ia1, y = n)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = "")), 
+            size = 3,
+            position = position_stack(vjust = 0.5)) +
+  labs(title = "Usa inteligencia artificial en su trabajo",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+
+```
+
+```{r Usos de IA, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  summarise(ia2_01 = mean(ia2_1, na.rm = T),
+            ia2_02 = mean(ia2_2, na.rm = T),
+            ia2_03 = mean(ia2_3, na.rm = T),
+            ia2_04 = mean(ia2_4, na.rm = T),
+            ia2_05 = mean(ia2_5, na.rm = T),
+            ia2_06 = mean(ia2_6, na.rm = T),
+            ia2_07 = mean(ia2_7, na.rm = T),
+            ia2_08 = mean(ia2_8, na.rm = T),
+            ia2_09 = mean(ia2_9, na.rm = T),
+            ia2_10 = mean(ia2_10, na.rm = T)) %>% 
+  pivot_longer(cols = everything(), names_to = "tipo", values_to = "porcentaje") %>% 
+  ggplot(aes(x = fct_rev(tipo), y = porcentaje)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1, suffix = ""), y = porcentaje - 0.04), size = 3) +
+  labs(title = "Principales usos de la IA",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(labels = c("Otros",
+                              "Cálculos matemáticos",
+                              "Programación",
+                              "Consultas (chatbot)",
+                              "Reconocimiento de audio",
+                              "Generación de imagen y video",
+                              "Reconocimiento de imagen",
+                              "Traducir textos",
+                              "Comprensión / Síntesis de textos",
+                              "Redactar, editar, corregir textos")) +
+  coord_flip()
+```
+
+```{r Programas de IA, echo=FALSE, message=FALSE, warning=FALSE}
+
+base %>% 
+  summarise(ia3_01 = mean(ia3_1, na.rm = T),
+            ia3_02 = mean(ia3_2, na.rm = T),
+            ia3_03 = mean(ia3_3, na.rm = T),
+            ia3_04 = mean(ia3_4, na.rm = T),
+            ia3_05 = mean(ia3_5, na.rm = T),
+            ia3_06 = mean(ia3_6, na.rm = T),
+            ia3_07 = mean(ia3_7, na.rm = T),
+            ia3_08 = mean(ia3_8, na.rm = T),
+            ia3_09 = mean(ia3_9, na.rm = T),
+            ia3_10 = mean(ia3_10, na.rm = T)) %>% 
+  pivot_longer(cols = everything(), names_to = "tipo", values_to = "porcentaje") %>% 
+  mutate(tipo = factor(tipo, labels = c("ChatGPT", "Bard", "Microsoft Copilot", "GitHub Copilot", "DALL-E",
+                                        "Midjourney", "DeepL", "Civitai", "Quillbot", "Character.IA"))) %>% 
+  filter(porcentaje > 0) %>%
+  ggplot(aes(x = fct_rev(tipo), y = porcentaje)) +
+  geom_bar(stat = "identity", alpha = 0.7) +
+  geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1, suffix = ""), y = porcentaje - 0.04), size = 3) +
+  labs(title = "Principales herramientas de IA utilizadas",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  coord_flip()
 
 ```
 
