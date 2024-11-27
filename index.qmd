@@ -9,7 +9,7 @@ format:
 ---
 
 ```{r base y liberias, echo=FALSE, message=FALSE, warning=FALSE}
-pacman::p_load(tidyverse, haven, summarytools, janitor, ggthemr, GDAtools, ggsci, factoextra, FactoMineR)
+pacman::p_load(tidyverse, haven, summarytools, janitor, ggthemr, GDAtools, ggsci, DT)
 
 rm(list = ls())
 
@@ -683,14 +683,12 @@ En este análisis se indaga la relación entre las dimensiones laborales identif
 ```{r ACM, echo=FALSE, message=FALSE, warning=FALSE, out.width='120%'}
 
 base_mca <- base %>% 
-  select(frecuencia4, frecuencia5, frecuencia6, frecuencia7, frecuencia8, frecuencia9, frecuencia10, frecuencia11, habili14, habili15, habili11, habili13, habili3, habili6, habili8, habili9, tecno4, tarea4, CIUO1)
+  select(frecuencia4, frecuencia5, frecuencia6, frecuencia7, frecuencia8, frecuencia9, frecuencia10, frecuencia11, habili14, habili15, habili11, habili13, habili3, habili6, habili8, habili9, tecno4, tarea4, CIUO1, ramact, ia1)
 
 base_mca <- base_mca %>% 
-  mutate(across(frecuencia4:tecno4, ~case_when(. == "Nunca" ~ "0",
-                                                . == "Menos de una vez al mes" ~ "<1",
+  mutate(across(frecuencia4:tecno4, ~case_when(. %in% c("Nunca", "Menos de una vez al mes") ~ "0",
                                                 . == "Menos de una vez a la semana pero por lo menos una vez al mes" ~ "1-3",
-                                                . == "Por lo menos una vez a la semana pero no todos los días" ~ "4-29",
-                                                . == "Todos los días" ~ "30")),
+                                                . %in% c("Por lo menos una vez a la semana pero no todos los días", "Todos los días") ~ "4-30")),
          tarea4 = case_when(tarea4 == "Para nada" ~ "N",
                             tarea4 == "Muy poco" ~ "MP",
                             tarea4 == "En alguna medida" ~ "AM",
@@ -698,7 +696,7 @@ base_mca <- base_mca %>%
                             tarea4 == "Muy alta medida" ~ "T")) %>% 
   rename(cooperar = frecuencia4,
          compartir_info = frecuencia5,
-         ensenar = tarea4,
+         ensenar = frecuencia6,
          aconsejar = frecuencia7,
          planif_prop = frecuencia8,
          planif_otros = frecuencia9,
@@ -718,13 +716,13 @@ base_mca <- base_mca %>%
 
 mca <- speMCA(base_mca[,1:16], ncp = 2)
 
-# mca <- flip.mca(mca, dim = 1)
+mca <- flip.mca(mca, dim = 2)
 
 modif.rate(mca)$modif 
 
 
 ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .2,
-                  textsize = 2, points = "best", legend = "none", col = "black") +
+                  textsize = 2, legend = "none", col = "black") +
   labs(title = "Análisis de correspondencias múltiples", 
        subtitle = "Tareas y habilidades laborales. Variables activas",
        caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
@@ -732,26 +730,56 @@ ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .
         axis.title.y = element_text(size = 9),
         axis.text.y = element_text(size = 8),
         axis.text.x = element_text(size = 8),
-        plot.caption = element_text(size = 9, hjust = 1)) 
+        plot.caption = element_text(size = 9, hjust = 1)) +
+  annotate("text", x = .5, y = 2, label = "Presencia cuellos de botella", size = 4, hjust = .3, vjust = 0, colour = "red") +
+  annotate("text", x = -1, y = 1, label = "Ausencia cuellos de botella", size = 4, hjust = .3, vjust = 0, colour = "red")
 
 ggmca
 
 ```
+
+```{r ACM resultados, echo=FALSE, message=FALSE, warning=FALSE}
+contrib_1 <- tabcontrib(mca, dim = 1, best = T)
+contrib_2 <- tabcontrib(mca, dim = 2, best = T)
+
+datatable(
+  contrib_1,
+  options = list(
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 3) # Fija la primera columna
+  ),
+  caption = "Contribuciones al factor 1",
+  extensions = "FixedColumns"
+)
+
+datatable(
+  contrib_2,
+  options = list(
+    scrollX = TRUE,
+    fixedColumns = list(leftColumns = 3) # Fija la primera columna
+  ),
+  caption = "Contribuciones al factor 2",
+  extensions = "FixedColumns"
+)
+
+
+```
+
 
 ```{r ACM suplementarias, echo=FALSE, message=FALSE, warning=FALSE, out.width='120%'}
 
 ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .2,
                   textsize = 2, points = "best", legend = "none", col = "lightgrey") +
   labs(title = "Análisis de correspondencias múltiples", 
-       subtitle = "Tareas y habilidades laborales. Variables suplementarias (OCUPACIONES)",
+       subtitle = "Tareas y habilidades laborales. Variables suplementarias (Ocupaciones, rama de actividad \ny uso de IA)",
        caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_text(size = 9),
         axis.title.y = element_text(size = 9),
         axis.text.y = element_text(size = 8),
         axis.text.x = element_text(size = 8),
-        plot.caption = element_text(size = 9, hjust = 1)) 
+        plot.caption = element_text(size = 9, hjust = 1))
 
-ggadd_supvars(ggmca, mca, vars = base_mca["CIUO1"], vlab = F, force = 2, shapes = T, shapesize = 1.5)
+ggadd_supvars(ggmca, mca, vars = base_mca[, c("CIUO1", "ia1", "ramact")], vlab = F, force = 1, shapes = T, shapesize = 1.5)
 
 
 ```

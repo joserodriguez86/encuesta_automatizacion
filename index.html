@@ -34,6 +34,30 @@ ul.task-list li input[type="checkbox"] {
 <script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="index_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="index_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<link href="index_files/libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+
+<script src="index_files/libs/datatables-binding-0.33/datatables.js"></script>
+
+<script src="index_files/libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+
+<link href="index_files/libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<link href="index_files/libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+
+<script src="index_files/libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+
+<link href="index_files/libs/dt-ext-fixedcolumns-1.13.6/css/fixedColumns.dataTables.min.css" rel="stylesheet">
+
+<script src="index_files/libs/dt-ext-fixedcolumns-1.13.6/js/dataTables.fixedColumns.min.js"></script>
+
+<link href="index_files/libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+
+<script src="index_files/libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+
 
 
 </head>
@@ -160,7 +184,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table></td>
-<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAFgAAAA8BAMAAAAQ3mBLAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxkPJRSVd1nsAAAASElEQVRIx2NgGJpACRMoCmIAqGJlYwwwqnhUMY0Vk5REBYkC5ChWHFU8qngYKSZKLVmKlYgCuIsCTGA0qnhUMTUVk5REhxoAABAV9PloIoqDAAAAAElFTkSuQmCC" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
+<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAFgAAAA8BAMAAAAQ3mBLAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxsULTGs0IO5AAAASElEQVRIx2NgGJpACRMoCmIAqGJlYwwwqnhUMY0Vk5REBYkC5ChWHFU8qngYKSZKLVmKlYgCuIsCTGA0qnhUMTUVk5REhxoAABAV9PloIoqDAAAAAElFTkSuQmCC" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
 <td style="text-align: center;">0 (0.0%)</td>
 </tr>
 <tr class="even">
@@ -183,7 +207,7 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table></td>
 <td style="text-align: left; vertical-align: middle;">52 distinct values</td>
-<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAHYAAABVBAMAAABusQ26AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxkPJRSVd1nsAAAAcklEQVRYw+3XUQoAERDGcVewN8AN1v3vtjU7KcWykwfl/z14kF80TcS58+IlV5QEP5faZgkWu5t9uzqabJLxxu5vh5fXhx02GRaLxWJzeVCDxab+9lgsFotdY1v/nlmrc6utHslkG8uxxWpl6zr/izsvD5453p9hEvbzAAAAAElFTkSuQmCC" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
+<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAHYAAABVBAMAAABusQ26AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxsULTI12dIDAAAAcklEQVRYw+3XUQoAERDGcVewN8AN1v3vtjU7KcWykwfl/z14kF80TcS58+IlV5QEP5faZgkWu5t9uzqabJLxxu5vh5fXhx02GRaLxWJzeVCDxab+9lgsFotdY1v/nlmrc6utHslkG8uxxWpl6zr/izsvD5453p9hEvbzAAAAAElFTkSuQmCC" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
 <td style="text-align: center;">0 (0.0%)</td>
 </tr>
 <tr class="odd">
@@ -242,7 +266,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table></td>
-<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAADwAAABgBAMAAACzngzNAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxkPJRSVd1nsAAAAXklEQVRIx2NgGFighAIE4QAqrWyMBIxGpQe/NIEIFcQBiJNGNxSb04xGpYeONIEIFcQBSEktmABbQkZK0qPSg1WaQIRSMbUoYk/IMDAqPQSkCUQohallVHpESQ8UAADxefw1wyMGAAAAAABJRU5ErkJggg==" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
+<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAADwAAABgBAMAAACzngzNAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxsULTI12dIDAAAAXklEQVRIx2NgGFighAIE4QAqrWyMBIxGpQe/NIEIFcQBiJNGNxSb04xGpYeONIEIFcQBSEktmABbQkZK0qPSg1WaQIRSMbUoYk/IMDAqPQSkCUQohallVHpESQ8UAADxefw1wyMGAAAAAABJRU5ErkJggg==" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
 <td style="text-align: center;">0 (0.0%)</td>
 </tr>
 <tr class="even">
@@ -324,7 +348,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table></td>
-<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAEYAAACFBAMAAAAUfJOtAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxkPJRSVd1nsAAAAeElEQVRYw+3SwQ2AIBBEUVqYEtjtAPrvzYvRiyxLAIM4//xiJDshrJdYnUZzuUSzrfFsA1YN5v5w2Vz/nGj+ZDzbgNW0rUqsvitnmk2M5+6wmrHDaBt9fhHNh43n7rAavsO60USzm/HcHXjPRBqaDoNBRmhoOsxKHYytX4p3k5ROAAAAAElFTkSuQmCC" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
+<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAEYAAACFBAMAAAAUfJOtAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxsULTI12dIDAAAAeElEQVRYw+3SwQ2AIBBEUVqYEtjtAPrvzYvRiyxLAIM4//xiJDshrJdYnUZzuUSzrfFsA1YN5v5w2Vz/nGj+ZDzbgNW0rUqsvitnmk2M5+6wmrHDaBt9fhHNh43n7rAavsO60USzm/HcHXjPRBqaDoNBRmhoOsxKHYytX4p3k5ROAAAAAElFTkSuQmCC" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
 <td style="text-align: center;">7 (1.6%)</td>
 </tr>
 <tr class="odd">
@@ -365,7 +389,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table></td>
-<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAEgAAAA8BAMAAAA3cOGjAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxkPJRSVd1nsAAAARklEQVRIx2NgGJxACQIEsQOoImVjEDAaVTSiFRGVVATxAlIUKeEFKA7HAYxGFY0MRUQlFRqnTOxZCs29o4pGmCKikspgAwD5sdhb50d/2wAAAABJRU5ErkJggg==" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
+<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAEgAAAA8BAMAAAA3cOGjAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxsULTI12dIDAAAARklEQVRIx2NgGJxACQIEsQOoImVjEDAaVTSiFRGVVATxAlIUKeEFKA7HAYxGFY0MRUQlFRqnTOxZCs29o4pGmCKikspgAwD5sdhb50d/2wAAAABJRU5ErkJggg==" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
 <td style="text-align: center;">0 (0.0%)</td>
 </tr>
 <tr class="even">
@@ -424,7 +448,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table></td>
-<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAFQAAABgBAMAAABxrkhJAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxkPJRSVd1nsAAAAaElEQVRYw+3VsQnAMAxEUa+gERJv4Oy/mxtDUsV3wo3gX/1ACE6otVq5hSzan20GFOpTo4QhxKefOTv6rjWg0IPUKGEISV/BJdC1FhR6mBolDCGJK4BCC1FB5n6BSvvPa4NC89QoYZVMa1dCZEmGAYcAAAAASUVORK5CYII=" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
+<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAFQAAABgBAMAAABxrkhJAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxsULTI12dIDAAAAaElEQVRYw+3VsQnAMAxEUa+gERJv4Oy/mxtDUsV3wo3gX/1ACE6otVq5hSzan20GFOpTo4QhxKefOTv6rjWg0IPUKGEISV/BJdC1FhR6mBolDCGJK4BCC1FB5n6BSvvPa4NC89QoYZVMa1dCZEmGAYcAAAAASUVORK5CYII=" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
 <td style="text-align: center;">1 (0.2%)</td>
 </tr>
 <tr class="odd">
@@ -474,13 +498,13 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table></td>
-<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAC8AAABPBAMAAACJ/YHFAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxkPJRSVd1nsAAAAUklEQVQ4y2NgoA9QQgOKAlAJZWNUMCpBTQmcwS6IDghKoBulpIDDcuNRCSpK4Ax20mOQqKhVRJZAdtWoBLUlcAY7ZTEoiMNyo1EJakvgDHZaAwBxJ8WYncfyKQAAAABJRU5ErkJggg==" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
+<td style="text-align: left; vertical-align: middle; padding: 0; background-color: transparent;"><img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAAC8AAABPBAMAAACJ/YHFAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAPUExURf////3+/aampvDw8P///7GHRIEAAAACdFJOUwAAdpPNOAAAAAFiS0dEAIgFHUgAAAAHdElNRQfoCxsULTI12dIDAAAAUklEQVQ4y2NgoA9QQgOKAlAJZWNUMCpBTQmcwS6IDghKoBulpIDDcuNRCSpK4Ax20mOQqKhVRJZAdtWoBLUlcAY7ZTEoiMNyo1EJakvgDHZaAwBxJ8WYncfyKQAAAABJRU5ErkJggg==" class="img-fluid" style="border:none;background-color:transparent;padding:0;max-width:max-content;"></td>
 <td style="text-align: center;">0 (0.0%)</td>
 </tr>
 </tbody>
 </table>
 
-<p>Generated by <a href="https://github.com/dcomtois/summarytools">summarytools</a> 1.0.1 (<a href="https://www.r-project.org/">R</a> version 4.4.2)<br>2024-11-25</p>
+<p>Generated by <a href="https://github.com/dcomtois/summarytools">summarytools</a> 1.0.1 (<a href="https://www.r-project.org/">R</a> version 4.4.2)<br>2024-11-27</p>
 </div>
 </section>
 <section id="datos-educativos" class="level3">
@@ -686,30 +710,19 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>          mrate cum.mrate
-1  58.503606942  58.50361
-2  17.682812102  76.18642
-3   6.973799118  83.16022
-4   3.467583045  86.62780
-5   2.459385629  89.08719
-6   2.092095636  91.17928
-7   1.733755145  92.91304
-8   1.257324891  94.17036
-9   1.083168804  95.25353
-10  0.977606371  96.23114
-11  0.781640937  97.01278
-12  0.720511316  97.73329
-13  0.548009406  98.28130
-14  0.462957811  98.74426
-15  0.338606671  99.08286
-16  0.249047787  99.33191
-17  0.192228756  99.52414
-18  0.149579580  99.67372
-19  0.102382232  99.77610
-20  0.075530195  99.85163
-21  0.067512787  99.91915
-22  0.059545472  99.97869
-23  0.015961914  99.99465
-24  0.005347452 100.00000</code></pre>
+1  8.472915e+01  84.72915
+2  7.570829e+00  92.29998
+3  2.133121e+00  94.43310
+4  1.542025e+00  95.97512
+5  1.213646e+00  97.18877
+6  9.650236e-01  98.15379
+7  8.196461e-01  98.97344
+8  4.870301e-01  99.46047
+9  3.728306e-01  99.83330
+10 1.544490e-01  99.98775
+11 6.983425e-03  99.99473
+12 4.647190e-03  99.99938
+13 6.200448e-04 100.00000</code></pre>
 </div>
 <div class="cell-output-display">
 <div>
@@ -717,6 +730,16 @@ ul.task-list li input[type="checkbox"] {
 <p><img src="index_files/figure-html/ACM-1.png" class="img-fluid figure-img" style="width:120.0%"></p>
 </figure>
 </div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-65a1f7ab04f21adad037" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-65a1f7ab04f21adad037">{"x":{"filter":"none","vertical":false,"extensions":["FixedColumns"],"caption":"<caption>Contribuciones al factor 1<\/caption>","data":[["9","10","1","2","18","17","15","16","19","20","6","7","3","4","13","14","12","11","22","21","5","8"],["influenciar","","aconsejar","","planif_otros","","negociar","","planif_prop","","ensenar","","calculo_medio","","lectura2","","lectura1","","problema_simple","problema_complejo","compartir_info","escritura2"],["0","4-30","0","4-30","4-30","0","0","4-30","0","4-30","0","4-30","0","4-30","0","4-30","4-30","0","0","0","0","0"],[148,217,147,225,152,239,169,205,96,285,213,138,184,215,227,145,129,242,36,80,54,220],[0.494,0.374,0.344,0.372,0.323,0.421,0.315,0.268,0.31,0.268,0.326,0.202,0.283,0.255,0.232,0.163,0.16,0.211,0.207,0.195,0.158,0.234],["7.87","","5.51","","","4.51","4.65","","5.87","","3.99","","3.93","","2.65","","","2.23","4.62","3.87","3.37","2.77"],["","4.49","","4.29","5.07","","","3.4","","2.17","","3.33","","3.09","","2.63","2.73","","","","",""],["12.36","","9.8","","9.59","","8.05","","8.03","","7.32","","7.02","","5.28","","4.96","","4.62","3.87","3.37","2.77"],["12.36","","22.16","","31.75","","39.8","","47.83","","55.15","","62.17","","67.46","","72.42","","77.04","80.91","84.28","87.05"],["12.34","","9.78","","9.52","","8.04","","8.03","","7.15","","7.02","","5.22","","4.91","","4.62","3.87","3.37","2.77"],["98.38","","98.71","","92.22","","99.4","","99.68","","87.74","","99.32","","90.78","","92.14","","86.83","68.72","79.79","47.42"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Variable<\/th>\n      <th>Category<\/th>\n      <th>Weight<\/th>\n      <th>Quality of representation<\/th>\n      <th>Contribution (left)<\/th>\n      <th>Contribution (right)<\/th>\n      <th>Total contribution<\/th>\n      <th>Cumulated contribution<\/th>\n      <th>Contribution of deviation<\/th>\n      <th>Proportion to variable<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"fixedColumns":{"leftColumns":3},"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Variable","targets":1},{"name":"Category","targets":2},{"name":"Weight","targets":3},{"name":"Quality of representation","targets":4},{"name":"Contribution (left)","targets":5},{"name":"Contribution (right)","targets":6},{"name":"Total contribution","targets":7},{"name":"Cumulated contribution","targets":8},{"name":"Contribution of deviation","targets":9},{"name":"Proportion to variable","targets":10}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-e5c56e75569ea75ffbfd" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-e5c56e75569ea75ffbfd">{"x":{"filter":"none","vertical":false,"extensions":["FixedColumns"],"caption":"<caption>Contribuciones al factor 2<\/caption>","data":[["12","13","7","6","1","2","18","17","15","16","19","3","4","8","9","10","11","14","5"],["influenciar","","cooperar","","aconsejar","","planif_otros","","negociar","","planif_prop","calculo_avanzado","","ensenar","","escritura1","escritura2","lectura1","compartir_info"],["1-3","4-30","4-30","0","1-3","4-30","4-30","1-3","1-3","4-30","1-3","1-3","4-30","1-3","4-30","4-30","1-3","0","1-3"],[58,217,172,160,53,225,152,35,51,205,44,18,27,73,138,5,76,242,33],[0.269,0.204,0.18,0.157,0.157,0.109,0.135,0.083,0.079,0.093,0.132,0.06,0.058,0.068,0.079,0.081,0.078,0.122,0.048],["","5.21","5.56","","","2.67","4.52","","","2.51","","","","","2.78","","","2.74",""],["12.06","","","5.08","7.15","","","3.94","3.63","","6.14","2.98","2.82","2.95","","4.16","3.33","","2.31"],["17.27","","10.65","","9.82","","8.46","","6.14","","6.14","5.8","","5.73","","4.16","3.33","2.74","2.31"],["17.27","","27.92","","37.74","","46.2","","52.34","","58.48","64.27","","70","","74.17","77.49","80.23","82.54"],["17.08","","10.63","","9.73","","7.34","","5.82","","6.14","5.72","","5.61","","4.16","3.33","2.74","2.31"],["96.82","","99.48","","97.23","","78.66","","88.18","","82.23","88.4","","95.93","","95.32","82.11","42.67","90.54"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Variable<\/th>\n      <th>Category<\/th>\n      <th>Weight<\/th>\n      <th>Quality of representation<\/th>\n      <th>Contribution (left)<\/th>\n      <th>Contribution (right)<\/th>\n      <th>Total contribution<\/th>\n      <th>Cumulated contribution<\/th>\n      <th>Contribution of deviation<\/th>\n      <th>Proportion to variable<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"fixedColumns":{"leftColumns":3},"columnDefs":[{"className":"dt-right","targets":[3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Variable","targets":1},{"name":"Category","targets":2},{"name":"Weight","targets":3},{"name":"Quality of representation","targets":4},{"name":"Contribution (left)","targets":5},{"name":"Contribution (right)","targets":6},{"name":"Total contribution","targets":7},{"name":"Cumulated contribution","targets":8},{"name":"Contribution of deviation","targets":9},{"name":"Proportion to variable","targets":10}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="cell">
