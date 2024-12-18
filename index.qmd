@@ -23,6 +23,8 @@ base <- read_sav("bases/Base OEI 20-11.sav")
 theme_set(theme_light() +
             theme(plot.caption = element_text(size = 9)))
 
+options(scipen = 999)
+
 ```
 
 ```{r arreglo de variables, echo=FALSE, message=FALSE, warning=FALSE}
@@ -381,6 +383,30 @@ base %>%
         plot.caption = element_text(size = 9)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_x_discrete(labels = function(x) str_wrap(x, width = 25))
+```
+
+### Ingresos laborales  
+
+```{r ingresos, echo=FALSE, message=FALSE, warning=FALSE}
+base %>% 
+  mutate(ingresos_medios = mean(ingresos)) %>% 
+  ggplot(aes(x = ingresos)) +
+  geom_histogram(fill = "lightblue", alpha = 0.7) +
+  geom_vline(aes(xintercept = ingresos_medios), color = "red", linetype = "dashed",
+             size = .5) +
+  labs(title = "Distribución de los ingresos laborales",
+       subtitle = "Ingreso promedio en línea punteada",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 8),
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 8),
+        plot.caption = element_text(size = 9)) +
+  scale_x_continuous(limits = c(0, 4000000), breaks = seq(0, 4000000, 500000))
+  
+
 ```
 
 
