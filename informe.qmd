@@ -1013,6 +1013,26 @@ base %>%
 
 #### Mercado de trabajo
 
+```{r Laborales, echo=FALSE, message=FALSE, warning=FALSE}
+base %>%
+  ggplot(aes(x=auto_index, y=CIUO1, fill=CIUO1)) +
+  geom_density_ridges(alpha = .5) +
+  geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
+  geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
+  labs(title = "Riesgo de automatización según ocupación",
+       subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(legend.position = "none",
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.y = element_text(size = 9),
+        axis.text.x = element_text(size = 9),
+        title = element_text(size = 9)) +
+  scale_fill_ucscgb() +
+  scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  scale_x_continuous(breaks=seq(0, 1, 0.1))
+
+```
 
 
 
