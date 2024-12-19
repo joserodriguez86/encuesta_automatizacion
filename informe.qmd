@@ -9,7 +9,9 @@ format:
     code-links:
       - text: Link a repo
         href: repo
-
+    fig-width: 8
+    fig-height: 5
+    dpi: 300
 ---
 
 ```{r base y liberias, echo=FALSE, message=FALSE, warning=FALSE}
