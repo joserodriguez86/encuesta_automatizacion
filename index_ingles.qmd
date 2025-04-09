@@ -32,143 +32,140 @@ options(scipen = 999)
 ```
 
 ```{r arreglo de variables, echo=FALSE, message=FALSE, warning=FALSE}
-
 base <- base %>% 
-  mutate(sex = factor(case_when(sex == 2 ~ "Varón",
-                                sex == 1 | sex == 3 ~ "Mujer",
+  mutate(sex = factor(case_when(sex == 2 ~ "Male",
+                                sex == 1 | sex == 3 ~ "Female",
                             TRUE ~ NA_character_)),
          grupo_edad = factor(case_when(Edad < 30 ~ "19-29",
                                 Edad >= 30 & Edad < 40 ~ "30-39",
                                 Edad >= 40 & Edad < 66 ~ "40-65",
                                 Edad >= 66 ~ ">= 66"),
                              levels = c("19-29", "30-39", "40-65", ">= 66")),
-         sitcony = factor(case_when(sitcony == 1 ~ "unido",
-                                   sitcony == 2 ~ "casado",
-                                   sitcony == 3 ~ "separado/a o divorciado/a",
-                                   sitcony == 4 ~ "viudo/a",
-                                   sitcony == 5 ~ "soltero/a",
+         sitcony = factor(case_when(sitcony == 1 ~ "In a relationship",
+                                   sitcony == 2 ~ "Married",
+                                   sitcony == 3 ~ "Separated or divorced",
+                                   sitcony == 4 ~ "Widowed",
+                                   sitcony == 5 ~ "Single",
                                    TRUE ~ NA_character_)),
-         obs = factor(case_when(obs == 1 ~ "Obra social",
-                                obs == 2 | obs == 4 ~ "Prepaga",
-                                obs == 3 ~ "Hospital público o centros de salud",
+         obs = factor(case_when(obs == 1 ~ "Social security",
+                                obs == 2 | obs == 4 ~ "Private health insurance",
+                                obs == 3 ~ "Public hospital or health centers",
                                 TRUE ~ NA_character_)),
-         pais = factor(case_when(pais == 1 ~ "En esta localidad",
-                                  pais == 2 ~ "En otra localidad de esta provincia",
-                                  pais == 3 ~ "En otra provincia",
-                                  pais == 4 ~ "En un país limítrofe",
-                                  pais == 5 ~ "En otro país",
+         pais = factor(case_when(pais == 1 ~ "In this locality",
+                                  pais == 2 ~ "In another locality of this province",
+                                  pais == 3 ~ "In another province",
+                                  pais == 4 ~ "In a neighboring country",
+                                  pais == 5 ~ "In another country",
                                   TRUE ~ NA_character_)),
-         local = factor(case_when(local == 1 ~ "CABA",
-                                  local == 2 ~ "Conurbano GBA",
+         local = factor(case_when(local == 1 ~ "Ciudad de Buenos Aires",
+                                  local == 2 ~ "Gran Buenos Aires",
                                   local == 3 ~ "Córdoba",
                                   local == 4 ~ "Mar del Plata",
                                   TRUE ~ NA_character_)),
-         nivel_ed = factor(case_when(nivel == 1 | ((nivel == 3 | nivel == 4) & nivel2 == 0) ~ "Hasta sec. incom.",
-                                    (nivel == 3 | nivel == 4) & nivel2 == 1 ~ "Hasta sec. com.",
-                                    nivel == 5 & nivel2 == 0 ~ "Hasta terc. incom.",
-                                    nivel == 5 & nivel2 == 1 ~ "Hasta terc. com.",
-                                    nivel == 6 & nivel2 == 0 ~ "Universitario incom.",
-                                    nivel == 6 & nivel2 == 1 ~ "Universitario com.",
-                                    nivel == 7 ~ "Posgrado",
+         nivel_ed = factor(case_when(nivel == 1 | ((nivel == 3 | nivel == 4) & nivel2 == 0) ~ "Up to incomplete secondary",
+                                    (nivel == 3 | nivel == 4) & nivel2 == 1 ~ "Up to complete secondary",
+                                    nivel == 5 & nivel2 == 0 ~ "Up to incomplete tertiary",
+                                    nivel == 5 & nivel2 == 1 ~ "Up to complete tertiary",
+                                    nivel == 6 & nivel2 == 0 ~ "Incomplete university",
+                                    nivel == 6 & nivel2 == 1 ~ "Complete university",
+                                    nivel == 7 ~ "Postgraduate",
                                     TRUE ~ NA_character_),
-                           levels = c("Hasta sec. incom.", "Hasta sec. com.", "Hasta terc. incom.", "Hasta terc. com.", "Universitario incom.", "Universitario com.", "Posgrado")),
-         nivel_ed_2 = factor(case_when(nivel <= 4 | ((nivel == 5 | nivel == 6) & nivel2 == 0) ~ "Hasta sec. comp.",
-                                       (nivel == 5 | nivel == 6) & nivel2 == 1 ~ "Superior comp.",
-                                       nivel == 7 ~ "Superior comp."),
-                             levels = c("Hasta sec. comp.",
-                                        "Superior comp.")),
-         tit = case_when(tit == 1 ~ "Ciencias sociales / humanidades",
-                         tit == 2 ~ "Economía y administración",
-                         tit == 3 ~ "Ciencias naturales",
-                         tit == 4 ~ "Comunicación",
-                         tit == 5 ~ "Arte",
-                         tit == 6 ~ "Educación física",
-                         tit == 7 ~ "Agrario / ambiente",
-                         tit == 8 ~ "Técnica",
+                           levels = c("Up to incomplete secondary", "Up to complete secondary", "Up to incomplete tertiary", "Up to complete tertiary", "Incomplete university", "Complete university", "Postgraduate")),
+         nivel_ed_2 = factor(case_when(nivel <= 4 | ((nivel == 5 | nivel == 6) & nivel2 == 0) ~ "Up to complete secondary",
+                                       (nivel == 5 | nivel == 6) & nivel2 == 1 ~ "Higher education complete",
+                                       nivel == 7 ~ "Higher education complete"),
+                             levels = c("Up to complete secondary",
+                                        "Higher education complete")),
+         tit = case_when(tit == 1 ~ "Social sciences / humanities",
+                         tit == 2 ~ "Economics and business administration",
+                         tit == 3 ~ "Natural sciences",
+                         tit == 4 ~ "Communication",
+                         tit == 5 ~ "Arts",
+                         tit == 6 ~ "Physical education",
+                         tit == 7 ~ "Agriculture / environment",
+                         tit == 8 ~ "Technical",
                          TRUE ~ NA_character_),
          tit2_c = factor(tit2_c),
-         caes_f = factor(CAES_letra, labels = c("Agricultura, ganadería, caza, pesca",
-                                                "Industria manufacturera",
-                                                "Construcción",
-                                                "Comercio",
-                                                "Alojamiento y servicios de comidas",
-                                                "Información y comunicación",
-                                                "Actividades financieras y de seguros",
-                                                "Actividades profesionales, científicas y técnicas",
-                                                "Actividades administratias y servicios de apoyo",
-                                                "Administración pública y defensa",
-                                                "Enseñanza",
-                                                "Salud humana y servicios sociales",
-                                                "Otras actividades de servicio")),
+         caes_f = factor(CAES_letra, labels = c("Agriculture, livestock, hunting, fishing",
+                                                "Manufacturing industry",
+                                                "Construction",
+                                                "Trade",
+                                                "Accommodation and food services",
+                                                "Information and communication",
+                                                "Financial and insurance activities",
+                                                "Professional, scientific and technical activities",
+                                                "Administrative activities and support services",
+                                                "Public administration and defense",
+                                                "Education",
+                                                "Human health and social services",
+                                                "Other service activities")),
          ramact = factor(ramact, labels = c("Software",
-                                        "Metalmecánica",
-                                        "Farmacéutica",
-                                        "Alimentación",
-                                        "Hotelería",
-                                        "Textil",
-                                        "Mueble")),
-         CIUO1 = factor(case_when(CIUO >= 1000 & CIUO < 2000 ~ "Directores y gerentes",
-                           CIUO >= 2000 & CIUO < 3000 ~ "Profesionales científicos e intelectuales",
-                           CIUO >= 3000 & CIUO < 4000 ~ "Técnicos y profesionales de nivel medio",
-                           CIUO >= 4000 & CIUO < 5000 ~ "Personal de apoyo administrativo",
-                           CIUO >= 5000 & CIUO < 6000 ~ "Trabajadores de los servicios y comerciantes",
-                           CIUO >= 7000 & CIUO < 8000 ~ "Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
-                           CIUO >= 8000 & CIUO < 9000 ~ "Operadores de instalaciones y máquinas y ensambladores",
-                           CIUO >= 9000 & CIUO < 9990 ~ "Ocupaciones elementales",
+                                        "Metalworking",
+                                        "Pharmaceutical",
+                                        "Food industry",
+                                        "Hospitality",
+                                        "Textile",
+                                        "Furniture")),
+         CIUO1 = factor(case_when(CIUO >= 1000 & CIUO < 2000 ~ "Directors and managers",
+                           CIUO >= 2000 & CIUO < 3000 ~ "Scientific and intellectual professionals",
+                           CIUO >= 3000 & CIUO < 4000 ~ "Technicians and mid-level professionals",
+                           CIUO >= 4000 & CIUO < 5000 ~ "Administrative support staff",
+                           CIUO >= 5000 & CIUO < 6000 ~ "Service workers and salespeople",
+                           CIUO >= 7000 & CIUO < 8000 ~ "Craft and related trades workers",
+                           CIUO >= 8000 & CIUO < 9000 ~ "Plant and machine operators and assemblers",
+                           CIUO >= 9000 & CIUO < 9990 ~ "Elementary occupations",
                            TRUE ~ NA_character_),
-                        levels = c("Directores y gerentes",
-                                   "Profesionales científicos e intelectuales",
-                                   "Técnicos y profesionales de nivel medio",
-                                   "Personal de apoyo administrativo",
-                                   "Trabajadores de los servicios y comerciantes",
-                                                                      "Oficiales, operarios y artesanos de artes mecánicas y de otros oficios",
-                                   "Operadores de instalaciones y máquinas y ensambladores",
-                                   "Ocupaciones elementales")),
+                        levels = c("Directors and managers",
+                                   "Scientific and intellectual professionals",
+                                   "Technicians and mid-level professionals",
+                                   "Administrative support staff",
+                                   "Service workers and salespeople",
+                                   "Craft and related trades workers",
+                                   "Plant and machine operators and assemblers",
+                                   "Elementary occupations")),
          CIUO_c = as.character(CIUO),
          CIUO3 = as.numeric(substr(CIUO_c, 1, 3)),
          CIUO2 = as.numeric(substr(CIUO_c, 1, 2)),
          tamano = ifelse(trabajprin5 == -999, NA_character_, trabajprin5),
-         tamano = factor(tamano, labels = c("Una sola persona",
-                                    "2 a 5",
-                                    "6 a 10",
-                                    "11 a 50",
-                                    "51 a 200",
-                                    "Más de 200")))
+         tamano = factor(tamano, labels = c("One person",
+                                    "2 to 5",
+                                    "6 to 10",
+                                    "11 to 50",
+                                    "51 to 200",
+                                    "More than 200")))
 
 base <- base %>% 
-  mutate(across(tarea1:tarea4, ~factor(., labels = c("Para nada", "Muy poco", "En alguna medida", "En gran medida", "En muy alta medida"))))
+  mutate(across(tarea1:tarea4, ~factor(., labels = c("Not at all", "Very little", "To some extent", "To a great extent", "To a very high extent"))))
 
 base <- base %>% 
   mutate(across(frecuencia1:tecno5, ~ na_if(., -999))) 
 
 base <- base %>%
   mutate(across(frecuencia1:tecno5, ~factor(., levels = c(1, 2, 3, 4, 5),
-                                                  labels = c("Nunca",
-                                                             "Menos de una vez al mes",
-                                                             "Menos de una vez a la semana pero por lo menos una vez al mes",
-                                                             "Por lo menos una vez a la semana pero no todos los días",
-                                                             "Todos los días"))))
-
+                                                  labels = c("Never",
+                                                             "Less than once a month",
+                                                             "Less than once a week but at least once a month",
+                                                             "At least once a week but not every day",
+                                                             "Every day"))))
 
 base <- base %>% 
-  mutate(ia1 = factor(ia1, labels = c("IA-No", "IA-Sí")))
+  mutate(ia1 = factor(ia1, labels = c("AI-No", "AI-Yes")))
 
-         
-#Imputación ingresos
+# Income imputation
 base <- base %>% 
-  mutate(trabajprin15c = case_when(trabajprin15 == 1 ~ "No tuvo ingresos",
-                                   trabajprin15 == 2 ~ "1 a 90000",
-                                   trabajprin15 == 4 ~ "150001 a 200000",
-                                   trabajprin15 == 6 ~ "270001 a 330000",
-                                   trabajprin15 == 7 ~ "330001 a 410000",
-                                   trabajprin15 == 8 ~ "410001 a 510000",
-                                   trabajprin15 == 9 ~ "510001 a 660000",
-                                   trabajprin15 == 10 ~ "660001 a 900000",
-                                   trabajprin15 == 11 ~ "900001 a 1400000",
-                                   trabajprin15 == 12 ~ "1400001 a 2500000",
-                                   trabajprin15 == 13 ~ "2500001 a 5300000",
-                                   trabajprin15 == -999 ~ "Ns/Nc"),
-          rango_ingresos_ocup = case_when(trabajprin14 >= 1 & trabajprin14 <= 90000 ~ "1 a 90000",
+  mutate(trabajprin15c = case_when(trabajprin15 == 1 ~ "No income",
+                                   trabajprin15 == 2 ~ "1 to 90000",
+                                   trabajprin15 == 4 ~ "150001 to 200000",
+                                   trabajprin15 == 6 ~ "270001 to 330000",
+                                   trabajprin15 == 7 ~ "330001 to 410000",
+                                   trabajprin15 == 8 ~ "410001 to 510000",
+                                   trabajprin15 == 9 ~ "510001 to 660000",
+                                   trabajprin15 == 10 ~ "660001 to 900000",
+                                   trabajprin15 == 11 ~ "900001 to 1400000",
+                                   trabajprin15 == 12 ~ "1400001 to 2500000",
+                                   trabajprin15 == 13 ~ "2500001 to 5300000",
+                                   trabajprin15 == -999 ~ "Unknown/No answer"),
+         rango_ingresos_ocup = case_when(trabajprin14 >= 1 & trabajprin14 <= 90000 ~ "1 a 90000",
                                          trabajprin14 >= 150001 & trabajprin14 <= 200000 ~ "150001 a 200000",
                                          trabajprin14 >= 270001 & trabajprin14 <= 330000 ~ "270001 a 330000",
                                          trabajprin14 >= 330001 & trabajprin14 <= 410000 ~ "330001 a 410000",
@@ -208,8 +205,7 @@ base <- hotdeck(data = base, variable = "ingresos")
 ### Datos sociodemográficos
 ```{r datos sociodemográficos, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 demograficos <- base %>% 
-  select(sex, grupo_edad, sitcony, hij, obs, pais, local, nivel_ed_2) %>% 
-  mutate(hij = as.numeric(hij))
+  select(sex, Edad, sitcony, hij, obs, pais, local, nivel_ed_2)
 
 print(dfSummary(demograficos, 
                 varnumbers   = FALSE, 
@@ -220,9 +216,9 @@ print(dfSummary(demograficos,
 theme_gtsummary_language("es", decimal.mark = ",", big.mark = ".")
 theme_gtsummary_compact()
 
-demograficos %>%
-  tbl_summary(include = c(sex, grupo_edad, sitcony, hij, obs, pais, local, nivel_ed_2),
-                 label = c(grupo_edad ~ "Edad", 
+base %>%
+  tbl_summary(include = c(sex, Edad, sitcony, hij, obs, pais, local, nivel_ed_2),
+                 label = c(Edad ~ "Edad", 
                            sex ~ "Sexo", 
                            sitcony ~ "Situación conyugal",
                            hij ~ "Cantidad de hijos",
@@ -230,7 +226,6 @@ demograficos %>%
                            pais ~ "Lugar de nacimiento",
                            local ~ "Lugar de residencia",
                            nivel_ed_2 ~ "Nivel educativo alcanzado"),
-                 type = list(hij ~ "continuous"),
                  statistic = list(all_continuous() ~ "{mean} ({sd})",
                                   all_categorical() ~ "{n} ({p}%)"),
                  digits = list(all_categorical() ~ c(0, 1)),
@@ -253,7 +248,7 @@ base %>%
   geom_bar(stat = "identity", alpha = 0.7) +
   geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.02), size = 3) +
   labs(title = "Título de egreso del secundario",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         title = element_text(size = 12),
@@ -272,7 +267,7 @@ base %>%
   geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.02), size = 3) +
   labs(title = "Tipo de título superior",
        subtitle = "Población que finalizó estudios superiores",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         title = element_text(size = 12),
@@ -308,7 +303,7 @@ base %>%
   geom_bar(stat = "identity", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1, suffix = ""), y = porcentaje - 0.04), size = 3) +
   labs(title = "Cursos y capacitaciones realizadas en el último año",
-       caption = "Fuente: elaboración en base a encuesta propia. \n
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024 \n
        *Sobre el total de la población que indico realizar ese tipo de curso o capacitación") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
@@ -333,7 +328,7 @@ base %>%
 #   geom_bar(stat = "identity", alpha = 0.7) +
 #   geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.02), size = 3) +
 #   labs(title = "Rama de actividad declarada",
-#        caption = "Fuente: elaboración en base a encuesta propia.") +
+#        caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
 #   theme(axis.title.x = element_blank(),
 #         axis.title.y = element_blank(),
 #         axis.text.y = element_text(size = 8)) +
@@ -341,25 +336,6 @@ base %>%
 #   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
 #   coord_flip()
 
-
-base %>%
-  group_by(ramact) %>% 
-  tally() %>% 
-  adorn_percentages("col") %>% 
-  ggplot(aes(x = fct_reorder(ramact, n), y = n)) +
-  geom_bar(stat = "identity", alpha = 0.7) +
-  geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.02), size = 3) +
-  labs(title = "Rama de actividad",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 9),
-        plot.caption = element_text(size = 9)) +
-  scale_x_discrete(labels = function(x) str_wrap(x, width = 35)) +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  coord_flip()
-
-ggsave("salidas/rama_actividad2.png", width = 8, height = 5)
 
 
 # Calcular el número de observaciones por 'local'
@@ -380,8 +356,6 @@ base %>%
   ggplot(aes(x = fct_reorder(ramact, n), y = n)) +
   geom_bar(stat = "identity", alpha = 0.7) +
   geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n + 0.008), size = 3) +
-  labs(title = "Rama de actividad por ciudad",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.y = element_text(size = 10),
@@ -404,18 +378,17 @@ base %>%
   ggplot(aes(x = fct_rev(CIUO1), y = n)) +
   geom_bar(stat = "identity", alpha = 0.7) +
   geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.015), size = 3) +
-  labs(title = "Ocupación según CIUO 08 a 1 dígito",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+  # labs(title = "Ocupación según CIUO 08 a 1 dígito",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 10),
         plot.caption = element_text(size = 9)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_x_discrete(labels = function(x) str_wrap(x, width = 25)) +
   coord_flip()
 
-ggsave("salidas/ocupacion_ciuo.png", width = 8, height = 5)
-
+ggsave("salidas/ocupacion.png", width = 8, height = 5)
 
 base %>%
   filter(!is.na(tamano)) %>% 
@@ -425,16 +398,17 @@ base %>%
   ggplot(aes(x = tamano, y = n)) +
   geom_bar(stat = "identity", alpha = 0.7) +
   geom_text(aes(label = scales::percent(n, accuracy = 0.1, suffix = ""), y = n - 0.015), size = 3) +
-  labs(title = "Personas según tamaño del establecimiento en el que trabajan",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+  # labs(title = "Personas según tamaño del establecimiento en el que trabajan",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
         plot.caption = element_text(size = 9)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_x_discrete(labels = function(x) str_wrap(x, width = 25))
 
-ggsave("salidas/tamano.png", width = 8, height = 5)
+ggsave("salidas/tamano_establecimiento.png", width = 8, height = 5)
 ```
 
 ### Ingresos laborales  
@@ -448,7 +422,7 @@ base %>%
              size = .5) +
   labs(title = "Distribución de los ingresos laborales",
        subtitle = "Ingreso promedio en línea punteada",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.y = element_text(size = 8),
@@ -472,25 +446,30 @@ base %>%
   ggplot(aes(x = tarea, y = porcentaje, fill = categoria)) +
   geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
-                position = position_stack(.5), size = 2.5) +
+                position = position_stack(.5), size = 2.8) +
   scale_fill_ucscgb() +
-  labs(title = "Dimensiones de la autonomía en el trabajo",
-       subtitle = "Nivel de elección o cambio de...",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+  labs(
+    # title = "Dimensiones de la autonomía en el trabajo",
+       subtitle = "Level of choice or change of...",
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 10),
         legend.title = element_blank(),
         legend.position = "bottom",
-        legend.text = element_text(size = 8),
+        legend.text = element_text(size = 10),
         plot.caption = element_text(size = 9)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_discrete(labels = c("Secuencia de tareas", "Forma de hacer el trabajo",
-                              "Velocidad y ritmo",
-                              "Horas de trabajo")) +
+  scale_x_discrete(labels = c("Task sequence", 
+                                                     "Way of doing the job", 
+                                                     "Speed and pace", 
+                                                     "Working hours")) +
   coord_flip()
-  
+
 ggsave("salidas/autonomia.png", width = 8, height = 5)
+  
+
 ```
 
 ```{r Aprendizaje, echo=FALSE, message=FALSE, warning=FALSE}
@@ -502,22 +481,25 @@ base %>%
   ggplot(aes(x = frecuencia, y = porcentaje, fill = categoria)) +
   geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
-                position = position_stack(.5), size = 2.5) +
-  labs(title = "Dimensiones del aprendizaje en el trabajo",
-       subtitle = "Proporción de tiempo en el que...",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+                position = position_stack(.5), size = 2.8) +
+  labs(
+    # title = "Dimensiones del aprendizaje en el trabajo",
+       subtitle = "Proportion of time in which...",
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 11),
         legend.title = element_blank(),
-        legend.text = element_text(size = 8),
+        legend.text = element_text(size = 10),
         legend.key.height = unit(1.3, "cm")) +
   scale_fill_ucscgb(labels = function(x) str_wrap(x, width = 15)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_discrete(labels = str_wrap(c("Aprende cosas nuevas con colegas", "Aprende haciendo",
-                              "Se mantiene al día con productos y servicios"), width = 20))
+  scale_x_discrete(labels = str_wrap(c("Learn new things with colleagues", "Learn by doing",
+"Keep up to date with products and services"), width = 20))
 
 ggsave("salidas/aprendizaje.png", width = 8, height = 5)
+
 ```
 
 ```{r Cooperacion, echo=FALSE, message=FALSE, warning=FALSE}
@@ -529,22 +511,24 @@ base %>%
   ggplot(aes(x = frecuencia, y = porcentaje, fill = categoria)) +
   geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
-                position = position_stack(.5), size = 2.5) +
-  labs(title = "Dimensiones de la cooperación en el trabajo",
-       subtitle = "Proporción de tiempo en el que con compañeros del trabajo...",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+                position = position_stack(.5), size = 2.8) +
+  labs(
+    # title = "Dimensiones de la cooperación en el trabajo",
+       subtitle = "Proportion of time spent with coworkers...",
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 9),
+        axis.text.y = element_text(size = 11),
         legend.title = element_blank(),
-        legend.text = element_text(size = 9),
+        legend.text = element_text(size = 10),
         legend.key.height = unit(1.3, "cm")) +
   scale_fill_ucscgb(labels = function(x) str_wrap(x, width = 15)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_discrete(labels = str_wrap(c("Coopera o colabora",
-                                       "Comparte información",
-                                       "Capacita o enseña",
-                                       "Asesora o aconseja"), width = 20))
+  scale_x_discrete(labels = str_wrap(c("Cooperate or collaborate",
+"Share information",
+"Train or teach",
+"Advise or counsel"), width = 20))
 
 ggsave("salidas/cooperacion.png", width = 8, height = 5)
 
@@ -559,22 +543,25 @@ base %>%
   ggplot(aes(x = frecuencia, y = porcentaje, fill = categoria)) +
   geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
-                position = position_stack(.5), size = 2.5) +
-  labs(title = "Dimensiones de la planificación en el trabajo",
-       subtitle = "Proporción de tiempo en el que...",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+                position = position_stack(.5), size = 2.9) +
+  labs(
+    # title = "Dimensiones de la planificación en el trabajo",
+       subtitle = "Proportion of time in which...",
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 9),
+        axis.text.x = element_text(size = 11),
         legend.title = element_blank(),
-        legend.text = element_text(size = 9),
+        legend.text = element_text(size = 10),
         legend.key.height = unit(1.3, "cm")) +
   scale_fill_ucscgb(labels = function(x) str_wrap(x, width = 15)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_discrete(labels = str_wrap(c("Planifica sus propias actividades",
-                                       "Planifica actividades de otros"), width = 20))
+  scale_x_discrete(labels = str_wrap(c("Plans own activities",
+                                       "Plans activities of others"), width = 20))
 
 ggsave("salidas/planificacion.png", width = 8, height = 5)
+
 ```
 
 ```{r Persuación, echo=FALSE, message=FALSE, warning=FALSE}
@@ -586,20 +573,22 @@ base %>%
   ggplot(aes(x = frecuencia, y = porcentaje, fill = categoria)) +
   geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1)),
-                position = position_stack(.5), size = 2.5) +
-  labs(title = "Dimensiones de la persuación en el trabajo",
-       subtitle = "Proporción de tiempo en el que...",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+                position = position_stack(.5), size = 3) +
+  labs(
+    # title = "Dimensiones de la persuación en el trabajo",
+       subtitle = "Proportion of time in which...",
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
-        axis.text.y = element_text(size = 9),
+        axis.text.x = element_text(size = 10),
         legend.title = element_blank(),
         legend.text = element_text(size = 9),
         legend.key.height = unit(1.3, "cm")) +
   scale_fill_ucscgb(labels = function(x) str_wrap(x, width = 15)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_discrete(labels = str_wrap(c("Convence o influencia sobre otras personas",
-                                       "Negocia con las personas"), width = 20))
+  scale_x_discrete(labels = str_wrap(c("Convince or influence other people",
+                                       "Negotiate with people"), width = 20))
 
 ggsave("salidas/persuacion.png", width = 8, height = 5)
 
@@ -618,7 +607,7 @@ base %>%
                 position = position_stack(.5), size = 2.5) +
   labs(title = "Dimensiones del trabajo físico",
        subtitle = "Proporción de tiempo en el que...",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.y = element_text(size = 8),
@@ -646,30 +635,32 @@ base %>%
   geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
   geom_text(aes(label = ifelse(porcentaje >= 0.04, scales::percent(porcentaje, accuracy = 0.1), "")), 
             position = position_stack(.5), size = 2.5) +
-  labs(title = "Habilidades de lectura y escritura",
-       subtitle = "Con qué frecuencia...",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+  labs(
+    # title = "Habilidades de lectura y escritura",
+       subtitle = "How often...",
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.y = element_text(size = 9),
         legend.title = element_blank(),
         legend.position = "bottom",
-        legend.text = element_text(size = 9)) +
+        legend.text = element_text(size = 8)) +
   scale_fill_ucscgb(guide = guide_legend(nrow = 2),
                       labels = function(x) str_wrap(x, width = 25)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_discrete(labels = c("Lee órdenes o instrucciones",
-                              "Lee cartas, memos o correos electrónicos",
-                              "Lee artículos en periódicos o revistas prof.",
-                              "Lee manuales o material de referencia",
-                              "Lee cuentas y facturas",
-                              "Lee mapas, diagramas o esquemas",
-                              "Escribe cartas o correos electrónicos",
-                              "Escribe artículos para periódicos o revistas",
-                              "Escribe informes")) +
+  scale_x_discrete(labels = c("Reads orders or instructions",
+                            "Reads letters, memos, or emails",
+                            "Reads articles in newspapers or professional magazines",
+                            "Reads manuals or reference materials",
+                            "Reads accounts and invoices",
+                            "Reads maps, diagrams, or schematics",
+                            "Writes letters or emails",
+                            "Writes articles for newspapers or magazines",
+                            "Writes reports")) +
   coord_flip()
-
-ggsave("salidas/habilidades_lectura.png", width = 8, height = 5)
+ 
+ggsave("salidas/lectura_escritura.png", width = 8, height = 5)
 
 ```
 
@@ -683,27 +674,32 @@ base %>%
   geom_bar(stat = "identity", position = "fill", alpha = 0.7) +
   geom_text(aes(label = ifelse(porcentaje >= 0.04, scales::percent(porcentaje, accuracy = 0.1), "")), 
             position = position_stack(.5), size = 2.5) +
-  labs(title = "Habilidades numéricas y problemas",
-       subtitle = "Con qué frecuencia...",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+  labs(
+    # title = "Habilidades numéricas y problemas",
+       subtitle = "How often...",
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.y = element_text(size = 9),
         legend.title = element_blank(),
         legend.position = "bottom",
-        legend.text = element_text(size = 9)) +
+        legend.text = element_text(size = 8)) +
   scale_fill_ucscgb(guide = guide_legend(nrow = 2),
                       labels = function(x) str_wrap(x, width = 25)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_discrete(labels = c("Calcula precios, costos o presupuestos",
-                              "Calcula fracciones, decimales o porcentajes",
-                              "Usa cálculos algebraicos o fórmulas simples",
-                              "Usa estadística compleja",
-                              "Se enfrenta a problemas simples",
-                              "Se enfrenta a problemas complejos")) +
+  scale_x_discrete(labels = c("Calculates prices, costs, or budgets",
+                            "Calculates fractions, decimals, or percentages",
+                            "Uses algebraic calculations or simple formulas",
+                            "Uses complex statistics",
+                            "Handles simple problems",
+                            "Handles complex problems")) +
+
   coord_flip()
+
+ggsave("salidas/numeros_problemas.png", width = 8, height = 5)
   
-ggsave("salidas/habilidades_numericas.png", width = 8, height = 5)
+
 ```
 
 ### Tecnología
@@ -721,7 +717,7 @@ base %>%
             position = position_stack(.5), size = 2.5) +
   labs(title = "Habilidades tecnológicas",
        subtitle = "Con qué frecuencia...",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.y = element_text(size = 8),
@@ -754,7 +750,7 @@ base %>%
             size = 3,
             position = position_stack(vjust = 0.5)) +
   labs(title = "Usa inteligencia artificial en su trabajo",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank()) +
   scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
@@ -778,24 +774,26 @@ base %>%
   ggplot(aes(x = fct_reorder(tipo, porcentaje), y = porcentaje)) +
   geom_bar(stat = "identity", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1, suffix = ""), y = porcentaje - 0.02), size = 3) +
-  labs(title = "Principales usos de la IA",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+  # labs(title = "Principales usos de la IA",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank()) +
+        axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 10)) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  scale_x_discrete(labels = c("Otros",
-                              "Cálculos matemáticos",
-                              "Programación",
-                              "Consultas (chatbot)",
-                              "Reconocimiento de audio",
-                              "Generación de imagen y video",
-                              "Reconocimiento de imagen",
-                              "Traducir textos",
-                              "Comprensión / Síntesis de textos",
-                              "Redactar, editar, corregir textos")) +
+  scale_x_discrete(labels = c("Others",
+                            "Mathematical calculations",
+                            "Programming",
+                            "Queries (chatbot)",
+                            "Audio recognition",
+                            "Image and video generation",
+                            "Image recognition",
+                            "Text translation",
+                            "Text comprehension / synthesis",
+                            "Writing, editing, proofreading texts")) +
+
   coord_flip()
 
-ggsave("salidas/uso_IA.png", width = 8, height = 5)
+ggsave("salidas/uso_ia.png", width = 8, height = 5)
 ```
 
 ```{r Programas de IA, echo=FALSE, message=FALSE, warning=FALSE}
@@ -819,7 +817,7 @@ base %>%
   geom_bar(stat = "identity", alpha = 0.7) +
   geom_text(aes(label = scales::percent(porcentaje, accuracy = 0.1, suffix = ""), y = porcentaje - 0.02), size = 3) +
   labs(title = "Principales herramientas de IA utilizadas",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank()) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -841,76 +839,83 @@ base_mca <- base %>%
   select(frecuencia4, frecuencia5, frecuencia6, frecuencia7, frecuencia8, frecuencia9, frecuencia10, frecuencia11, habili14, habili15, habili11, habili13, habili3, habili6, habili8, habili9, tecno4, tarea4, CIUO1, ramact, ia1, ia2_1:ia2_10)
 
 base_mca <- base_mca %>% 
-  mutate(across(frecuencia4:tecno4, ~case_when(. %in% c("Nunca", "Menos de una vez al mes") ~ "0",
-                                                . == "Menos de una vez a la semana pero por lo menos una vez al mes" ~ "1-3",
-                                                . %in% c("Por lo menos una vez a la semana pero no todos los días", "Todos los días") ~ "4-30")),
-         tarea4 = case_when(tarea4 == "Para nada" ~ "N",
-                            tarea4 == "Muy poco" ~ "MP",
-                            tarea4 == "En alguna medida" ~ "AM",
-                            tarea4 == "En gran medida" ~ "GM",
-                            tarea4 == "Muy alta medida" ~ "T"),
+  mutate(across(frecuencia4:tecno4, ~case_when(. %in% c("Never",
+"Less than once a month") ~ "0",
+                                                . == "Less than once a week but at least once a month" ~ "1-3",
+                                                . %in% c("At least once a week but not every day",
+"Every day") ~ "4-30")),
+         tarea4 = case_when(tarea4 == "Not at all" ~ "N",
+                   tarea4 == "Very little" ~ "VL",
+                   tarea4 == "To some extent" ~ "SE",
+                   tarea4 == "To a great extent" ~ "GE",
+                   tarea4 == "To a very high extent" ~ "VHE"),
+
          across(ia2_1:ia2_10, ~case_when(. == 0 | is.na(.) ~ "No",
                                          . == 1 ~ "Si"))) %>% 
   mutate(across(ia2_1:ia2_10, as.factor)) %>%
-  rename(cooperar = frecuencia4,
-         compartir_info = frecuencia5,
-         ensenar = frecuencia6,
-         aconsejar = frecuencia7,
-         planif_prop = frecuencia8,
-         planif_otros = frecuencia9,
-         org_tiempo = tarea4,
-         influenciar = frecuencia10,
-         negociar = frecuencia11,
-         problema_simple = habili14,
-         problema_complejo = habili15,
-         calculo_medio = habili11,
-         calculo_avanzado = habili13,
-         lectura1 = habili3,
-         lectura2 = habili6,
-         escritura1 = habili8,
-         escritura2 = habili9,
-         leng_prog = tecno4,
-         redactar = ia2_1,
-         comprension = ia2_2,
-         traduccion = ia2_3,
-         reconocimiento = ia2_4,
-         imagen_video = ia2_5,
-         audio = ia2_6,
-         chatbot = ia2_7,
-         programacion = ia2_8,
-         calculos = ia2_9,
-         otros = ia2_10)
+  rename(cooperate = frecuencia4,
+       share_info = frecuencia5,
+       teach = frecuencia6,
+       advise = frecuencia7,
+       plan_own = frecuencia8,
+       plan_others = frecuencia9,
+       time_management = tarea4,
+       influence = frecuencia10,
+       negotiate = frecuencia11,
+       simple_problem = habili14,
+       complex_problem = habili15,
+       basic_math = habili11,
+       advanced_math = habili13,
+       reading1 = habili3,
+       reading2 = habili6,
+       writing1 = habili8,
+       writing2 = habili9,
+       programming_lang = tecno4,
+       drafting = ia2_1,
+       comprehension = ia2_2,
+       translation = ia2_3,
+       recognition = ia2_4,
+       image_video = ia2_5,
+       audio = ia2_6,
+       chatbot = ia2_7,
+       programming = ia2_8,
+       calculations = ia2_9,
+       others = ia2_10)
+
 
 
 mca <- speMCA(base_mca[,1:18], ncp = 2)
 
-mca <- flip.mca(mca, dim = 2)
+mca <- flip.mca(mca, dim = 1)
 
 modif.rate(mca)$modif 
 
 
 ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .2,
                   textsize = 2, legend = "none", col = "black") +
-  labs(title = "Análisis de correspondencias múltiples", 
-       subtitle = "Tareas y habilidades laborales. Variables activas",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+  labs(
+    # title = "Análisis de correspondencias múltiples", 
+       subtitle = "Tareas y habilidades laborales. Variables activas"
+       # ,
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
   theme(axis.title.x = element_text(size = 9),
         axis.title.y = element_text(size = 9),
         axis.text.y = element_text(size = 8),
         axis.text.x = element_text(size = 8),
         plot.caption = element_text(size = 9, hjust = 1)) +
-  annotate("text", x = -.8, y = 2, label = "Presencia cuellos de botella", size = 4, hjust = .3, vjust = 0, colour = "red") +
-  annotate("text", x = .7, y = 1, label = "Ausencia cuellos de botella", size = 4, hjust = .3, vjust = 0, colour = "red")
+  annotate("text", x = -.8, y = 2, label = "Presence of bottlenecks", size = 4, hjust = .3, vjust = 0, colour = "red") +
+  annotate("text", x = .7, y = 1, label = "Absence of bottlenecks", size = 4, hjust = .3, vjust = 0, colour = "red")
 
 ggmca
 
-ggsave("salidas/ACM.png", width = 8, height = 5)
+ggsave("salidas/mca.png", width = 8, height = 5)
 
 cloud_ind <- ggcloud_indiv(mca, col = "lightgrey") +
   scale_color_d3() +
   labs(title = "Análisis de correspondencias múltiples", 
        subtitle = "Nube de individuos",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "right",
         legend.title = element_blank(),
         legend.text = element_text(size = 9),
@@ -928,6 +933,7 @@ cloud_ind
 ```{r ACM resultados, echo=FALSE, message=FALSE, warning=FALSE}
 contrib_1 <- tabcontrib(mca, dim = 1, best = T)
 contrib_2 <- tabcontrib(mca, dim = 2, best = T)
+
 
 datatable(
   contrib_1,
@@ -957,9 +963,12 @@ datatable(
 
 ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .2,
                   textsize = 2, points = "best", legend = "none", col = "lightgrey") +
-  labs(title = "Análisis de correspondencias múltiples", 
-       subtitle = "Tareas y habilidades laborales. Variables suplementarias (Ocupaciones, rama de actividad \ny uso de IA)",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+  labs(
+    # title = "Análisis de correspondencias múltiples", 
+       subtitle = "Job tasks and skills. Supplementary variables (Occupations, branch of activity and use of AI)"
+       # ,
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
   theme(axis.title.x = element_text(size = 9),
         axis.title.y = element_text(size = 9),
         axis.text.y = element_text(size = 8),
@@ -969,7 +978,11 @@ ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .
 
 ggadd_supvars(ggmca, mca, vars = base_mca[,19:21], vlab = F, force = 1, shapes = T, shapesize = 1.5)
 
-ggsave("salidas/ACM_suplementarias.png", width = 8, height = 5)
+ggsave("salidas/mca_sup.png", width = 8, height = 5)
+
+des <- dimdescr(mca, vars = base_mca[,19:21])
+des <- des$dim.1$categories
+
 ```
 
 
@@ -984,7 +997,6 @@ base <- base %>%
          auto_index = (dim1 - min(dim1)) / (max(dim1) - min(dim1)))   
 
 summary(base$auto_index)
-sd(base$auto_index)
 
 ```
 
@@ -999,7 +1011,7 @@ base %>%
   geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
   labs(title = "Riesgo de automatización según sexo",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1009,8 +1021,6 @@ base %>%
   scale_fill_ucscgb() +
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
-
-ggsave("salidas/sexo.png", width = 8, height = 5)
 
 base %>%
   ggplot(aes(x=auto_index, y=grupo_edad, fill=grupo_edad)) +
@@ -1019,7 +1029,7 @@ base %>%
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
   labs(title = "Riesgo de automatización según edad",
        subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1030,7 +1040,24 @@ base %>%
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
 
-ggsave("salidas/edad.png", width = 8, height = 5)
+
+base %>%
+  ggplot(aes(x=auto_index, y=grupo_edad, fill=grupo_edad)) +
+  geom_density_ridges(alpha = .5) +
+  geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
+  geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
+  labs(title = "Riesgo de automatización según edad",
+       subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(legend.position = "none",
+        axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.y = element_text(size = 9),
+        axis.text.x = element_text(size = 9),
+        title = element_text(size = 9)) +
+  scale_fill_ucscgb() +
+  scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  scale_x_continuous(breaks=seq(0, 1, 0.1))
 
 
 base %>%
@@ -1040,7 +1067,7 @@ base %>%
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
   labs(title = "Riesgo de automatización según nivel educativo",
        subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1050,8 +1077,6 @@ base %>%
   scale_fill_ucscgb() +
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
-
-ggsave("salidas/nivel_educativo.png", width = 8, height = 5)
 
 ```
 
@@ -1066,7 +1091,7 @@ base %>%
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
   labs(title = "Riesgo de automatización según ocupación",
        subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1076,8 +1101,6 @@ base %>%
   scale_fill_ucscgb() +
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
-
-ggsave("salidas/ocupacion.png", width = 8, height = 5)
 
 base %>%
   ggplot(aes(x=auto_index, y=ramact, fill=ramact)) +
@@ -1086,7 +1109,7 @@ base %>%
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
   labs(title = "Riesgo de automatización según rama de actividad",
        subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1096,8 +1119,6 @@ base %>%
   scale_fill_ucscgb() +
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
-
-ggsave("salidas/ramact.png", width = 8, height = 5)
 
 base %>%
   filter(!is.na(tamano)) %>% 
@@ -1107,7 +1128,7 @@ base %>%
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
   labs(title = "Riesgo de automatización según tamaño del establecimiento",
        subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración en base a encuesta propia.") +
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1118,7 +1139,6 @@ base %>%
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
 
-ggsave("salidas/tamano.png", width = 8, height = 5)
 
 ```
 
@@ -1141,11 +1161,11 @@ ggplot(tabla, aes(x=promedio_auto, y=sd_auto, color = CIUO1, label = as.characte
   geom_text_repel(min.segment.length = 5, seed = 52, box.padding = 0.1, size = 1.8,
                   max.overlaps = 20) +
   labs(title = "Distribución de ocupaciones según promedio y desviación estándar del riesgo de automatización",
-       caption = "Fuente: elaboración en base a encuesta propia.",
-       color = "CIUO (1 dígito)",
-       y = "Desvío estándar",
-       x = "Riesgo de automatización") +
-  theme(axis.text.y = element_text(size = 9),
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024",
+       color = "CIUO (1 dígito)") +
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.y = element_text(size = 9),
         axis.text.x = element_text(size = 9),
         title = element_text(size = 9),
         legend.title = element_text(face = "bold"),
@@ -1154,8 +1174,6 @@ ggplot(tabla, aes(x=promedio_auto, y=sd_auto, color = CIUO1, label = as.characte
   scale_y_continuous(breaks=seq(0, .4, 0.05))+
   scale_x_continuous(breaks=seq(0, 1, 0.1)) +
   scale_color_ucscgb(labels = function(x) str_wrap(x, width = 25))
-
-ggsave("salidas/ocupaciones_sd.png", width = 8, height = 5)
 ```
 
 
