@@ -956,7 +956,7 @@ datatable(
 ```{r ACM suplementarias, echo=FALSE, message=FALSE, warning=FALSE, out.width='120%'}
 
 ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .2,
-                  textsize = 2, points = "best", legend = "none", col = "lightgrey") +
+                  textsize = 2, points = "best", legend = "none", col = "grey50") +
   labs(title = "Análisis de correspondencias múltiples", 
        subtitle = "Tareas y habilidades laborales. Variables suplementarias (Ocupaciones, rama de actividad \ny uso de IA)",
        caption = "Fuente: elaboración en base a encuesta propia.") +
@@ -1118,7 +1118,7 @@ base %>%
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
 
-ggsave("salidas/tamano.png", width = 8, height = 5)
+ggsave("salidas/tamano2.png", width = 8, height = 5)
 
 ```
 

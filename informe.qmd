@@ -901,7 +901,7 @@ datatable(
 ```{r ACM suplementarias, echo=FALSE, message=FALSE, warning=FALSE, out.width='120%'}
 
 ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .2,
-                  textsize = 2, points = "best", legend = "none", col = "lightgrey") +
+                  textsize = 2, points = "best", legend = "none", col = "grey50") +
   labs(title = "Análisis de correspondencias múltiples", 
        subtitle = "Tareas y habilidades laborales. Variables suplementarias (Ocupaciones, rama de actividad \ny uso de IA)",
        caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
