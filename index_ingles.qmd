@@ -16,7 +16,7 @@ format:
 
 ```{r base y liberias, echo=FALSE, message=FALSE, warning=FALSE}
 pacman::p_load(tidyverse, haven, summarytools, janitor, ggsci, GDAtools, ggsci, DT,
-               VIM, gtsummary, ggridges, ggrepel)
+               VIM, gtsummary, ggridges, ggrepel, openxlsx)
 
 rm(list = ls())
 
@@ -408,7 +408,7 @@ base %>%
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_x_discrete(labels = function(x) str_wrap(x, width = 25))
 
-ggsave("salidas/tamano_establecimiento.png", width = 8, height = 5)
+ggsave("salidas/tamano_establecimiento.png", width = 8, height = 5, dpi = 300)
 ```
 
 ### Ingresos laborales  
@@ -833,7 +833,7 @@ base %>%
 
 En este análisis se indaga la relación entre las dimensiones laborales identificadas como cuellos de botella a la automatización. 
 
-```{r ACM, echo=FALSE, message=FALSE, warning=FALSE, out.width='120%'}
+```{r ACM, echo=FALSE, message=FALSE, warning=FALSE, eval=FALSE, out.width='120%'}
 
 base_mca <- base %>% 
   select(frecuencia4, frecuencia5, frecuencia6, frecuencia7, frecuencia8, frecuencia9, frecuencia10, frecuencia11, habili14, habili15, habili11, habili13, habili3, habili6, habili8, habili9, tecno4, tarea4, CIUO1, ramact, ia1, ia2_1:ia2_10)
@@ -930,8 +930,115 @@ cloud_ind
 
 ```
 
+```{r ACM alternative, echo=FALSE, message=FALSE, warning=FALSE, out.width='120%'}
+
+base_mca <- base %>% 
+  select(frecuencia4, frecuencia5, frecuencia6, frecuencia7, frecuencia8, frecuencia9, frecuencia10, frecuencia11, habili14, habili15, habili11, habili13, habili3, habili6, habili8, habili9, tecno4, tarea4, CIUO1, ramact, ia1, ia2_1:ia2_10)
+
+base_mca <- base_mca %>% 
+  mutate(across(frecuencia4:tecno4, ~case_when(. == "Never" ~ "N",
+                                               . == "Less than once a month" ~ "LM",
+                                               . == "Less than once a week but at least once a month" ~ "LW",
+                                               . == "At least once a week but not every day" ~ "AW",
+                                               . == "Every day" ~ "ED")),
+         tarea4 = case_when(tarea4 == "Not at all" ~ "N",
+                   tarea4 == "Very little" ~ "VL",
+                   tarea4 == "To some extent" ~ "SE",
+                   tarea4 == "To a great extent" ~ "GE",
+                   tarea4 == "To a very high extent" ~ "VHE"),
+
+         across(ia2_1:ia2_10, ~case_when(. == 0 | is.na(.) ~ "No",
+                                         . == 1 ~ "Si"))) %>% 
+  mutate(across(ia2_1:ia2_10, as.factor)) %>%
+  rename(cooperate = frecuencia4,
+       share_info = frecuencia5,
+       teach = frecuencia6,
+       advise = frecuencia7,
+       plan_own = frecuencia8,
+       plan_others = frecuencia9,
+       time_management = tarea4,
+       influence = frecuencia10,
+       negotiate = frecuencia11,
+       simple_problem = habili14,
+       complex_problem = habili15,
+       basic_math = habili11,
+       advanced_math = habili13,
+       reading1 = habili3,
+       reading2 = habili6,
+       writing1 = habili8,
+       writing2 = habili9,
+       programming_lang = tecno4,
+       drafting = ia2_1,
+       comprehension = ia2_2,
+       translation = ia2_3,
+       recognition = ia2_4,
+       image_video = ia2_5,
+       audio = ia2_6,
+       chatbot = ia2_7,
+       programming = ia2_8,
+       calculations = ia2_9,
+       others = ia2_10)
+
+
+
+mca <- speMCA(base_mca[,1:18], ncp = 2)
+
+mca <- flip.mca(mca, dim = 2)
+
+tabla_inercia <- modif.rate(mca)$modif
+
+tabla_inercia <- tabla_inercia %>% 
+  mutate(mrate = round(mrate, 4),
+         cum.mrate = round(cum.mrate, 4))
+
+write.xlsx(tabla_inercia,
+           file = "salidas/tabla_inercia_mca.xlsx",
+           rowNames = TRUE) 
+
+
+ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = 3, max.overlaps = 5,
+                  textsize = 2, legend = "none", col = "black") +
+  labs(
+    # title = "Análisis de correspondencias múltiples", 
+       # subtitle = "Tareas y habilidades laborales. Variables activas",
+       x = "Axis 1 (55% inertia)",
+       y = "Axis 2 (18.2% inertia)"
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
+  theme(axis.title.x = element_text(size = 9),
+        axis.title.y = element_text(size = 9),
+        axis.text.y = element_text(size = 8),
+        axis.text.x = element_text(size = 8),
+        plot.caption = element_text(size = 9, hjust = 1)) 
+  # annotate("text", x = -.8, y = 1.5, label = "Presence of bottlenecks", size = 4, hjust = .3, vjust = 0, colour = "red") +
+  # annotate("text", x = .7, y = 1, label = "Absence of bottlenecks", size = 4, hjust = .3, vjust = 0, colour = "red")
+
+ggmca
+
+ggsave("salidas/mca2.png", width = 8, height = 5)
+
+cloud_ind <- ggcloud_indiv(mca, col = "lightgrey") +
+  scale_color_d3() +
+  labs(title = "Análisis de correspondencias múltiples", 
+       subtitle = "Nube de individuos",
+       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  theme(legend.position = "right",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 9),
+        axis.title.x = element_text(size = 9),
+        axis.title.y = element_text(size = 9),
+        axis.text.y = element_text(size = 8),
+        axis.text.x = element_text(size = 8),
+        plot.caption = element_text(size = 9, hjust = 1)) +
+  guides(color = guide_legend(override.aes = list(size = 2)))
+
+cloud_ind
+
+
+```
+
 ```{r ACM resultados, echo=FALSE, message=FALSE, warning=FALSE}
-contrib_1 <- tabcontrib(mca, dim = 1, best = T)
+contrib_1 <- tabcontrib(mca, dim = 1, best = F)
 contrib_2 <- tabcontrib(mca, dim = 2, best = T)
 
 
@@ -955,18 +1062,19 @@ datatable(
   extensions = "FixedColumns"
 )
 
-
+ggeta2_variables(mca)
 ```
 
 
 ```{r ACM suplementarias, echo=FALSE, message=FALSE, warning=FALSE, out.width='120%'}
 
-ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .2,
-                  textsize = 2, points = "best", legend = "none", col = "lightgrey") +
+ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = 3, max.overlaps = 5,
+                  textsize = 2, legend = "none", col = "lightgrey") +
   labs(
     # title = "Análisis de correspondencias múltiples", 
-       subtitle = "Job tasks and skills. Supplementary variables (Occupations, branch of activity and use of AI)"
-       # ,
+       # subtitle = "Tareas y habilidades laborales. Variables activas",
+       x = "Axis 1 (55% inertia)",
+       y = "Axis 2 (18.2% inertia)"
        # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
        ) +
   theme(axis.title.x = element_text(size = 9),
@@ -976,12 +1084,25 @@ ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .
         plot.caption = element_text(size = 9, hjust = 1)) +
   scale_fill_ucscgb()
 
-ggadd_supvars(ggmca, mca, vars = base_mca[,19:21], vlab = F, force = 1, shapes = T, shapesize = 1.5)
+ggadd_supvars(ggmca, mca, vars = base_mca[,19:21], vlab = F, force = 1, shapes = T, shapesize = 1.5, textsize = 2.5) +
+  labs(
+    # title = "Análisis de correspondencias múltiples", 
+       # subtitle = "Tareas y habilidades laborales. Variables suplementarias"
+       # ,
+       # caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024"
+       ) +
+  theme(axis.title.x = element_text(size = 9),
+        axis.title.y = element_text(size = 9),
+        axis.text.y = element_text(size = 8),
+        axis.text.x = element_text(size = 8),
+        plot.caption = element_text(size = 9, hjust = 1))
 
 ggsave("salidas/mca_sup.png", width = 8, height = 5)
 
 des <- dimdescr(mca, vars = base_mca[,19:21])
 des <- des$dim.1$categories
+
+des
 
 ```
 
@@ -998,6 +1119,23 @@ base <- base %>%
 
 summary(base$auto_index)
 
+#Chequeo del índice
+mca2 <- speMCA(base_mca[, c("reading1", "complex_problem", "simple_problem", "share_info",
+                            "advanced_math", "time_management", "cooperate", "programming_lang", "writing1")], ncp = 2)
+
+ggcloud_variables(mca2, vlab = T, shapes = T, shapesize = 1.5, force = 3, max.overlaps = 5,
+                  textsize = 2, legend = "none", col = "black")
+
+
+index_full <- (mca$ind$coord[,1] - min(mca$ind$coord[,1])) /
+              (max(mca$ind$coord[,1]) - min(mca$ind$coord[,1]))
+
+index_red <- (mca2$ind$coord[,1] - min(mca2$ind$coord[,1])) /
+             (max(mca2$ind$coord[,1]) - min(mca2$ind$coord[,1]))
+
+cor(index_full, index_red, use = "complete.obs")
+
+
 ```
 
 ### Riesgo de automatización según grupos sociales
@@ -1010,8 +1148,8 @@ base %>%
   geom_density_ridges(alpha = .5) +
   geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
-  labs(title = "Riesgo de automatización según sexo",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  # labs(title = "Riesgo de automatización según sexo",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1021,15 +1159,17 @@ base %>%
   scale_fill_ucscgb() +
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
+
+ggsave("salidas/automatizacion_sexo.png", width = 8, height = 5)
 
 base %>%
   ggplot(aes(x=auto_index, y=grupo_edad, fill=grupo_edad)) +
   geom_density_ridges(alpha = .5) +
   geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
-  labs(title = "Riesgo de automatización según edad",
-       subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  # labs(title = "Riesgo de automatización según edad",
+  #      subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1039,6 +1179,8 @@ base %>%
   scale_fill_ucscgb() +
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
+
+ggsave("salidas/automatizacion_edad.png", width = 8, height = 5)
 
 
 base %>%
@@ -1046,9 +1188,9 @@ base %>%
   geom_density_ridges(alpha = .5) +
   geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
-  labs(title = "Riesgo de automatización según edad",
-       subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  # labs(title = "Riesgo de automatización según edad",
+  #      subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1059,15 +1201,16 @@ base %>%
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
 
+ggsave("salidas/automatizacion_edad_grupo.png", width = 8, height = 5)
 
 base %>%
   ggplot(aes(x=auto_index, y=nivel_ed_2, fill=nivel_ed_2)) +
   geom_density_ridges(alpha = .5) +
   geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
-  labs(title = "Riesgo de automatización según nivel educativo",
-       subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  # labs(title = "Riesgo de automatización según nivel educativo",
+  #      subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1077,6 +1220,8 @@ base %>%
   scale_fill_ucscgb() +
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
+
+ggsave("salidas/automatizacion_nivel_educativo.png", width = 8, height = 5)
 
 ```
 
@@ -1089,9 +1234,9 @@ base %>%
   geom_density_ridges(alpha = .5) +
   geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
-  labs(title = "Riesgo de automatización según ocupación",
-       subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  # labs(title = "Riesgo de automatización según ocupación",
+  #      subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1102,14 +1247,16 @@ base %>%
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
 
+ggsave("salidas/automatizacion_ocupacion.png", width = 8, height = 5)
+
 base %>%
   ggplot(aes(x=auto_index, y=ramact, fill=ramact)) +
   geom_density_ridges(alpha = .5) +
   geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
-  labs(title = "Riesgo de automatización según rama de actividad",
-       subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  # labs(title = "Riesgo de automatización según rama de actividad",
+  #      subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1119,6 +1266,8 @@ base %>%
   scale_fill_ucscgb() +
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
+
+ggsave("salidas/automatizacion_rama_actividad.png", width = 8, height = 5)
 
 base %>%
   filter(!is.na(tamano)) %>% 
@@ -1126,9 +1275,9 @@ base %>%
   geom_density_ridges(alpha = .5) +
   geom_vline(xintercept = 0.25, linetype = "dashed", color = "black") +
   geom_vline(xintercept = 0.57, linetype = "dashed", color = "black") +
-  labs(title = "Riesgo de automatización según tamaño del establecimiento",
-       subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  # labs(title = "Riesgo de automatización según tamaño del establecimiento",
+  #      subtitle = "Se grafican en líneas punteadas los percentiles 25 y 75",
+  #      caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(legend.position = "none",
         axis.title.y = element_blank(),
         axis.title.x = element_blank(),
@@ -1139,6 +1288,7 @@ base %>%
   scale_y_discrete(labels = function(x) str_wrap(x, width = 30)) +
   scale_x_continuous(breaks=seq(0, 1, 0.1))
 
+ggsave("salidas/automatizacion_tamano_establecimiento.png", width = 8, height = 5)
 
 ```
 
@@ -1160,9 +1310,7 @@ ggplot(tabla, aes(x=promedio_auto, y=sd_auto, color = CIUO1, label = as.characte
   geom_point() +
   geom_text_repel(min.segment.length = 5, seed = 52, box.padding = 0.1, size = 1.8,
                   max.overlaps = 20) +
-  labs(title = "Distribución de ocupaciones según promedio y desviación estándar del riesgo de automatización",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024",
-       color = "CIUO (1 dígito)") +
+  labs(color = "ISCO-08") +
   theme(axis.title.y = element_blank(),
         axis.title.x = element_blank(),
         axis.text.y = element_text(size = 9),
@@ -1174,6 +1322,8 @@ ggplot(tabla, aes(x=promedio_auto, y=sd_auto, color = CIUO1, label = as.characte
   scale_y_continuous(breaks=seq(0, .4, 0.05))+
   scale_x_continuous(breaks=seq(0, 1, 0.1)) +
   scale_color_ucscgb(labels = function(x) str_wrap(x, width = 25))
+
+ggsave("salidas/ocupaciones_riesgo_sd.png", width = 8, height = 5)
 ```
 
 
