@@ -248,7 +248,7 @@ base_mca <- base_mca %>%
   mutate(across(ia2_1:ia2_10, as.factor)) %>%
   rename(cooperar = frecuencia4,
          compartir_info = frecuencia5,
-         ensenar = frecuencia6,
+         enseñar = frecuencia6,
          aconsejar = frecuencia7,
          planif_prop = frecuencia8,
          planif_otros = frecuencia9,
@@ -279,7 +279,7 @@ base_mca <- base_mca %>%
 
 mca <- speMCA(base_mca[,1:18], ncp = 2)
 
-mca <- flip.mca(mca, dim = 2)
+# mca <- flip.mca(mca, dim = 2)
 
 tabla_inercia <- modif.rate(mca)$modif
 
@@ -287,16 +287,10 @@ tabla_inercia <- tabla_inercia %>%
   mutate(mrate = round(mrate, 4),
          cum.mrate = round(cum.mrate, 4))
 
-write.xlsx(tabla_inercia,
-           file = "salidas/tabla_inercia_mca.xlsx",
-           rowNames = TRUE) 
 
-
-ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .2,
+ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = 3, max.overlaps = 5,
                            textsize = 2, legend = "none", col = "black") +
-  labs(title = "Análisis de correspondencias múltiples", 
-       subtitle = "Tareas y habilidades laborales. Variables activas",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+  labs(caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
   theme(axis.title.x = element_text(size = 9),
         axis.title.y = element_text(size = 9),
         axis.text.y = element_text(size = 8),
@@ -307,29 +301,13 @@ ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .
 
 ggmca
 
-cloud_ind <- ggcloud_indiv(mca, col = "lightgrey") +
-  scale_color_d3() +
-  labs(title = "Análisis de correspondencias múltiples", 
-       subtitle = "Nube de individuos",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
-  theme(legend.position = "right",
-        legend.title = element_blank(),
-        legend.text = element_text(size = 9),
-        axis.title.x = element_text(size = 9),
-        axis.title.y = element_text(size = 9),
-        axis.text.y = element_text(size = 8),
-        axis.text.x = element_text(size = 8),
-        plot.caption = element_text(size = 9, hjust = 1)) +
-  guides(color = guide_legend(override.aes = list(size = 2)))
-
-cloud_ind
+ggsave("salidas/RE/mca.jpeg", width = 8, height = 5, dpi = 300)
 
 
-ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .2,
-                           textsize = 2, points = "best", legend = "none", col = "grey50") +
-  labs(title = "Análisis de correspondencias múltiples", 
-       subtitle = "Tareas y habilidades laborales. Variables suplementarias (Ocupaciones, rama de actividad \ny uso de IA)",
-       caption = "Fuente: elaboración propia en base a Encuesta de Automatización 2024") +
+ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = 3, max.overlaps = 5,
+                           textsize = 2, legend = "none", col = "grey80") +
+  labs(caption = str_wrap("Fuente: elaboración propia en base a Encuesta de Automatización 2024. Se han incoporado como variables suplemenarias 
+                          a la Ocupación, la rama de actividad, el uso de IA y el nivel de exposición a la GenIA según OIT.", width = 130)) +
   theme(axis.title.x = element_text(size = 9),
         axis.title.y = element_text(size = 9),
         axis.text.y = element_text(size = 8),
@@ -337,4 +315,7 @@ ggmca <- ggcloud_variables(mca, vlab = T, shapes = T, shapesize = 1.5, force = .
         plot.caption = element_text(size = 9, hjust = 1)) +
   scale_fill_ucscgb()
 
-ggadd_supvars(ggmca, mca, vars = base_mca[, c("CIUO1", "ramact", "ia1", "potential")], vlab = F, force = 1, shapes = T, shapesize = 1.5)
+ggadd_supvars(ggmca, mca, vars = base_mca[, c("CIUO1", "ramact", "ia1", "potential")], vlab = F, force = 1, shapes = T, 
+              shapesize = 1.5, textsize = 2.8)
+
+ggsave("salidas/RE/mca_sup.jpeg", width = 8, height = 5, dpi = 300)
